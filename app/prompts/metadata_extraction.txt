@@ -1,0 +1,22 @@
+You are extracting metadata from a scientific manuscript.
+Return ONLY a valid JSON object with no additional text or formatting.
+
+Required fields:
+1. "title" (string): The main title of the manuscript, excluding page numbers and headers
+2. "authors" (array): List of author names in "First Last" format, excluding affiliations and numbers
+3. "design" (string): a concise 3-7 word phrase summarizing the study design / methodology
+4. "doi" (string): DOI without URL prefix, leave empty if not found
+5. "abstract" (string): Abstract of the manuscript, leave empty if not found
+Example:
+{"title":"Effects of Exercise on Mental Health","authors":["John Smith","Jane Doe"],"design":"Longitudinal study with repeated measures over 12 months","doi":"10.1234/abcd.123", "abstract":"This study examined the effects of exercise on mental health in a sample of participants."}
+
+Important:
+- Return ONLY a valid JSON object
+- Do not include any explanations or additional text
+- Format author names as "First Last" only
+- For title, ignore any repeated titles in headers
+- For authors, ignore numbers and affiliations
+- Extract DOI from URLs if present (e.g. from "https://doi.org/10.1234/abcd.123" extract "10.1234/abcd.123")
+
+Manuscript text:
+{text}

@@ -1,0 +1,27 @@
+You are analyzing the structure of a scientific manuscript.
+Return ONLY a valid JSON object with no additional text or formatting.
+
+Extract exactly two sections:
+1. "results": Everything from the end of Introduction until References, including Methods, Results, Discussion, and Conclusion
+2. "other": Everything after References section 
+
+Do NOT include:
+- Abstract
+- Introduction
+- References
+
+Required JSON format:
+{"sections":[{"section":"results","start":"[exact text where section starts]","end":"[exact text where section ends]"},{"section":"other","start":"[exact text where section starts]","end":"[exact text where section ends]"}]}
+
+Important:
+- Return ONLY a valid JSON object
+- Do not include any explanations or additional text
+- Only extract "results" and "other" sections
+- Use exact text matches for start and end boundaries
+- For "results", start with "Methods" or "Present study" section and end at "References"
+- For "other", start after References and include everything after it
+- Choose short, unique text snippets for boundaries (1-3 words)
+- Make sure the text matches appear exactly in the manuscript
+
+Manuscript text:
+{text}

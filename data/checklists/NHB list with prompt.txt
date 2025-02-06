@@ -1,0 +1,26 @@
+"Given the following checklist for analyzing scientific manuscripts, your task is to refine and structure the checklist to enhance clarity for an automated evaluation system. Specifically, follow these steps:
+
+Preserve Structure & Original Wording: Retain the original structure of the checklist and ensure that each item remains logically categorized.
+Split Complex Items into Subitems: If a checklist item contains multiple distinct aspects, break it into separate subitems, ensuring that each question focuses on a single issue.
+Maintain Question Format: Convert each checklist item (or subitem) into a clear yes/no question to be assessed against a paper. If no split is needed, copy the original as the question.
+Output in Structured JSON Format: Return the refined checklist as structured JSON, using the following format:
+
+[
+    {
+        "checklist_item_id": "1",
+        "original": "[Original checklist item text]",
+        "question": "[Refined checklist question(s)]",
+        "section": "Behavioral/social sciences study design",
+        "title": "[Title of checklist item]",
+        "created_at": ""
+    }
+]
+
+Original are: 
+1Data collection	Provide details about the data collection procedure, including the instruments or devices used to record the data (e.g. pen and paper, computer, eye tracker, video or audio equipment) whether anyone was present besides the participant(s) and the researcher, and whether the researcher was blind to experimental condition and/or the study hypothesis during data collection.
+2Randomization	If participants were not allocated into experimental groups, state so OR describe how participants were allocated to groups, and if allocation was not random, describe how covariates were controlled.
+4Timing	Indicate the start and stop dates of data collection. If there is a gap between collection periods, state the dates for each sample cohort.
+5Non-participation	State how many participants dropped out/declined participation and the reason(s) given OR provide response rate OR state that no participants dropped out/declined participation.
+6Sampling strategy	Describe the sampling procedure (e.g. random, snowball, stratified, convenience). Describe the statistical methods that were used to predetermine sample size OR if no sample-size calculation was performed, describe how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient. For qualitative data, please indicate whether data saturation was considered, and what criteria were used to decide that no further sampling was needed.
+7Data exclusions	If no data were excluded from the analyses, state so OR if data were excluded, provide the exact number of exclusions and the rationale behind them, indicating whether exclusion criteria were pre-established.
+8Research sample	State the research sample (e.g. Harvard university undergraduates, villagers in rural India) and provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative. Provide a rationale for the study sample chosen. For studies involving existing datasets, please describe the dataset and source. 

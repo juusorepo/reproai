@@ -1,0 +1,20 @@
+Analyze this manuscript section for compliance with reporting guidelines.
+
+Item to check: {item[question]}
+
+Text to analyze:
+{text}
+
+You must respond with a valid JSON object containing exactly these fields:
+- compliance: Must be one of ["Yes", "No", "Partial", "n/a"]
+- explanation: Brief explanation of compliance status
+- quote: Relevant quote from text that supports your assessment (empty string if none)
+- section: Section where quote was found (empty string if none)
+
+Example response:
+{{
+    "compliance": "Yes",
+    "explanation": "The study design is clearly stated as RCT",
+    "quote": "We conducted a randomized controlled trial...",
+    "section": "methods"
+}}

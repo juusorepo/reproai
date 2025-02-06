@@ -1,0 +1,178 @@
+[
+  {
+    "checklist_item_id": "1.1",
+    "original": "Provide details about the data collection procedure, including the instruments or devices used to record the data (e.g. pen and paper, computer, eye tracker, video or audio equipment) whether anyone was present besides the participant(s) and the researcher, and whether the researcher was blind to experimental condition and/or the study hypothesis during data collection.",
+    "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data collection",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "1.2",
+    "original": "Provide details about the data collection procedure, including the instruments or devices used to record the data (e.g. pen and paper, computer, eye tracker, video or audio equipment) whether anyone was present besides the participant(s) and the researcher, and whether the researcher was blind to experimental condition and/or the study hypothesis during data collection.",
+    "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data collection",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "1.3",
+    "original": "Provide details about the data collection procedure, including the instruments or devices used to record the data (e.g. pen and paper, computer, eye tracker, video or audio equipment) whether anyone was present besides the participant(s) and the researcher, and whether the researcher was blind to experimental condition and/or the study hypothesis during data collection.",
+    "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data collection",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "2.1",
+    "original": "If participants were not allocated into experimental groups, state so OR describe how participants were allocated to groups, and if allocation was not random, describe how covariates were controlled.",
+    "question": "Does the paper specify whether participants were allocated into experimental groups?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Randomization",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "2.2",
+    "original": "If participants were not allocated into experimental groups, state so OR describe how participants were allocated to groups, and if allocation was not random, describe how covariates were controlled.",
+    "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Randomization",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "2.3",
+    "original": "If participants were not allocated into experimental groups, state so OR describe how participants were allocated to groups, and if allocation was not random, describe how covariates were controlled.",
+    "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Randomization",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "4.1",
+    "original": "Indicate the start and stop dates of data collection. If there is a gap between collection periods, state the dates for each sample cohort.",
+    "question": "Does the paper indicate the start and stop dates of data collection?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Timing",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "4.2",
+    "original": "Indicate the start and stop dates of data collection. If there is a gap between collection periods, state the dates for each sample cohort.",
+    "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Timing",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "5.1",
+    "original": "State how many participants dropped out/declined participation and the reason(s) given OR provide response rate OR state that no participants dropped out/declined participation.",
+    "question": "Does the paper specify how many participants dropped out or declined participation?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Non-participation",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "5.2",
+    "original": "State how many participants dropped out/declined participation and the reason(s) given OR provide response rate OR state that no participants dropped out/declined participation.",
+    "question": "Does the paper provide reasons for dropout or non-participation?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Non-participation",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "5.3",
+    "original": "State how many participants dropped out/declined participation and the reason(s) given OR provide response rate OR state that no participants dropped out/declined participation.",
+    "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Non-participation",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "6.1",
+    "original": "Describe the sampling procedure (e.g. random, snowball, stratified, convenience). Describe the statistical methods that were used to predetermine sample size OR if no sample-size calculation was performed, describe how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient. For qualitative data, please indicate whether data saturation was considered, and what criteria were used to decide that no further sampling was needed.",
+    "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Sampling strategy",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "6.2",
+    "original": "Describe the sampling procedure (e.g. random, snowball, stratified, convenience). Describe the statistical methods that were used to predetermine sample size OR if no sample-size calculation was performed, describe how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient. For qualitative data, please indicate whether data saturation was considered, and what criteria were used to decide that no further sampling was needed.",
+    "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Sampling strategy",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "6.3",
+    "original": "Describe the sampling procedure (e.g. random, snowball, stratified, convenience). Describe the statistical methods that were used to predetermine sample size OR if no sample-size calculation was performed, describe how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient. For qualitative data, please indicate whether data saturation was considered, and what criteria were used to decide that no further sampling was needed.",
+    "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Sampling strategy",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "6.4",
+    "original": "Describe the sampling procedure (e.g. random, snowball, stratified, convenience). Describe the statistical methods that were used to predetermine sample size OR if no sample-size calculation was performed, describe how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient. For qualitative data, please indicate whether data saturation was considered, and what criteria were used to decide that no further sampling was needed.",
+    "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Sampling strategy",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "7.1",
+    "original": "If no data were excluded from the analyses, state so OR if data were excluded, provide the exact number of exclusions and the rationale behind them, indicating whether exclusion criteria were pre-established.",
+    "question": "Does the paper state whether any data were excluded from the analyses?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data exclusions",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "7.2",
+    "original": "If no data were excluded from the analyses, state so OR if data were excluded, provide the exact number of exclusions and the rationale behind them, indicating whether exclusion criteria were pre-established.",
+    "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data exclusions",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "7.3",
+    "original": "If no data were excluded from the analyses, state so OR if data were excluded, provide the exact number of exclusions and the rationale behind them, indicating whether exclusion criteria were pre-established.",
+    "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Data exclusions",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "8.1",
+    "original": "State the research sample (e.g. Harvard university undergraduates, villagers in rural India) and provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative. Provide a rationale for the study sample chosen. For studies involving existing datasets, please describe the dataset and source.",
+    "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Research sample",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "8.2",
+    "original": "State the research sample (e.g. Harvard university undergraduates, villagers in rural India) and provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative. Provide a rationale for the study sample chosen. For studies involving existing datasets, please describe the dataset and source.",
+    "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Research sample",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "8.3",
+    "original": "State the research sample (e.g. Harvard university undergraduates, villagers in rural India) and provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative. Provide a rationale for the study sample chosen. For studies involving existing datasets, please describe the dataset and source.",
+    "question": "Does the paper provide a rationale for the study sample chosen?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Research sample",
+    "created_at": ""
+  },
+  {
+    "checklist_item_id": "8.4",
+    "original": "State the research sample (e.g. Harvard university undergraduates, villagers in rural India) and provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative. Provide a rationale for the study sample chosen. For studies involving existing datasets, please describe the dataset and source.",
+    "question": "For studies using existing datasets, does the paper describe the dataset and its source?",
+    "section": "Behavioral/social sciences study design",
+    "title": "Research sample",
+    "created_at": ""
+  }
+]
