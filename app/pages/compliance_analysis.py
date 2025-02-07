@@ -4,6 +4,8 @@ from datetime import datetime
 from typing import Dict, Any, List
 import plotly.graph_objects as go
 import plotly.express as px
+from app.models.manuscript import Manuscript
+from app.models.feedback import Feedback
 
 def format_compliance_status(status: str) -> str:
     """Format compliance status with color."""
@@ -74,25 +76,40 @@ def create_summary_chart(results: List[Dict[str, Any]]) -> go.Figure:
     
     return fig
 
-def display_compliance_results(results: List[Dict[str, Any]], checklist_items: List[Dict[str, Any]]):
+def display_compliance_results(results: List[Dict[str, Any]], checklist_items: List[Dict[str, Any]], manuscript):
     """Display compliance results in an interactive table."""
     if not results:
         st.warning("No compliance results found for this manuscript.")
         return
         
+    # Convert ComplianceResult objects to dictionaries if needed
+    results_data = []
+    for result in results:
+        if hasattr(result, '__dict__'):
+            results_data.append({
+                'item_id': result.item_id,
+                'compliance': result.compliance,
+                'explanation': result.explanation,
+                'quote': result.quote,
+                'section': result.section,
+                'created_at': result.created_at,
+                'question': result.question
+            })
+        else:
+            results_data.append(result)
+    
     # Create a lookup for checklist items
     checklist_lookup = {item["item_id"]: item for item in checklist_items}
     
     # Calculate compliance score
-    compliance_score = calculate_compliance_score(results)
+    compliance_score = calculate_compliance_score(results_data)
     
-    # Create summary dashboard
-    st.markdown("### Summary Dashboard")
+    # Create columns for dashboard
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
         # Show summary chart
-        st.plotly_chart(create_summary_chart(results), use_container_width=True)
+        st.plotly_chart(create_summary_chart(results_data), use_container_width=True)
     
     with col2:
         # Show compliance score with large number
@@ -105,7 +122,7 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
         
     with col3:
         # Show analysis timestamp
-        latest_result = max(results, key=lambda x: x["created_at"]) if results else None
+        latest_result = max(results_data, key=lambda x: x["created_at"]) if results_data else None
         if latest_result and latest_result.get("created_at"):
             st.markdown(f"""
             <div style='text-align: center; padding: 10px; background-color: #f0f2f6; border-radius: 10px;'>
@@ -116,79 +133,95 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
     
     st.markdown("---")
     
-    # Prepare data for display
-    display_data = []
-    for result in results:
-        item = checklist_lookup.get(result["item_id"], {})
-        display_data.append({
-            "ID": result["item_id"],
-            "Category": item.get("category", "Uncategorized"),
-            "Question": item.get("question", result.get("question", "Unknown")),
-            "Status": format_compliance_status(result["compliance"]),
-            "Explanation": result["explanation"],
-            "Quote": result["quote"],
-            "Section Found": result["section"],
-            "Section": item.get("section", ""),
-            "Original": item.get("original", ""),
-            "Last Updated": result["created_at"].strftime("%Y-%m-%d %H:%M") if result.get("created_at") else "Unknown"
-        })
-    
-    # Convert to DataFrame for easier filtering
-    df = pd.DataFrame(display_data)
-    
-    # Add filters
-    st.markdown("### Filters")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        category_filter = st.multiselect(
-            "Filter by Category",
-            options=sorted(df["Category"].unique()),
-            default=[]
-        )
-    with col2:
-        section_filter = st.multiselect(
-            "Filter by Section",
-            options=sorted(set(item.get("section", "") for item in checklist_items if item.get("section"))),
-            default=[]
-        )
-    with col3:
-        status_filter = st.multiselect(
-            "Filter by Status",
-            options=["Yes", "No", "Partial", "n/a"],
-            default=[]
-        )
-    
-    # Apply filters
-    if category_filter:
-        df = df[df["Category"].isin(category_filter)]
-    if section_filter:
-        df = df[df["Section"].isin(section_filter)]
-    if status_filter:
-        df = df[df["Status"].isin([format_compliance_status(s) for s in status_filter])]
-    
-    # Display results
-    st.markdown("### Detailed Results")
-    for _, row in df.iterrows():
-        with st.expander(f"{row['ID']} - {row['Question']}", expanded=False):
-            cols = st.columns([2, 1])
-            with cols[0]:
-                st.markdown(f"**Status:** {row['Status']}")
-                st.markdown(f"**Category:** {row['Category']}")
-                st.markdown(f"**Explanation:** {row['Explanation']}")
-                if row['Quote']:
-                    st.markdown(f"**Quote:** _{row['Quote']}_")
-                if row['Section Found']:
-                    st.markdown(f"**Section Found:** {row['Section Found']}")
-                if row['Section']:
-                    st.markdown(f"**Section:** {row['Section']}")
-                if row['Original']:
-                    st.markdown(f"**Original Item:** {row['Original']}")
-            with cols[1]:
-                st.markdown(f"**Last Updated:** {row['Last Updated']}")
-                
-                # Placeholder for future feedback buttons
-                st.markdown("---")
-                st.markdown("_Feedback options will be added here_")
+    # Display results with feedback options
+    for result in results_data:
+        with st.expander(f"Item {result['item_id']}: {result['question']}", expanded=False):
+            # Display result
+            st.markdown(f"**Status:** {format_compliance_status(result['compliance'])}")
+            if result['explanation']:
+                st.markdown(f"**Explanation:** {result['explanation']}")
+            if result['quote']:
+                st.markdown(f"**Quote:** _{result['quote']}_")
+            if result['section']:
+                st.markdown(f"**Section Found:** {result['section']}")
+            
+            # Get existing feedback
+            feedback = st.session_state.db_service.get_feedback(manuscript.doi, result['item_id'])
+            
+            # Feedback section
+            st.divider()
+            st.write("**Your Feedback**")
+            
+            # Feedback buttons in columns
+            cols = st.columns(4)
+            selected_rating = None
+            
+            # Define feedback options with their colors
+            feedback_options = [
+                ("Yes", "#2ecc71"),  # Green
+                ("No", "#e74c3c"),  # Red
+                ("Partial", "#f39c12"),  # Orange
+                ("N/A", "#95a5a6")  # Gray
+            ]
+            
+            for i, (rating, color) in enumerate(feedback_options):
+                with cols[i]:
+                    button_style = f"""
+                        <style>
+                            div[data-testid="stButton"] button {{
+                                background-color: {color if feedback and feedback.rating == rating else 'white'};
+                                color: {color if feedback and feedback.rating != rating else 'black'};
+                                border: 1px solid {color};
+                                width: 100%;
+                            }}
+                            div[data-testid="stButton"] button:hover {{
+                                background-color: {color};
+                                color: white;
+                                border: 1px solid {color};
+                            }}
+                        </style>
+                    """
+                    st.markdown(button_style, unsafe_allow_html=True)
+                    if st.button(
+                        rating,
+                        key=f"btn_{result['item_id']}_{rating}",
+                        use_container_width=True
+                    ):
+                        selected_rating = rating
+            
+            # Comments field and submit button in columns
+            comment_col, button_col = st.columns([3, 1])
+            with comment_col:
+                comments = st.text_area(
+                    "Comments",
+                    value=feedback.comments if feedback else "",
+                    key=f"comments_{result['item_id']}",
+                    placeholder="Add your comments here..."
+                )
+            
+            with button_col:
+                submit_clicked = st.button(
+                    "Submit Feedback",
+                    key=f"submit_{result['item_id']}",
+                    type="primary",
+                    use_container_width=True
+                )
+            
+            # Save feedback if rating changed or submit clicked
+            if selected_rating or submit_clicked:
+                if not selected_rating and not feedback:
+                    st.warning("Please select a rating before submitting feedback.")
+                else:
+                    new_feedback = Feedback(
+                        doi=manuscript.doi,
+                        item_id=result['item_id'],
+                        rating=selected_rating or (feedback.rating if feedback else None),
+                        comments=comments
+                    )
+                    if st.session_state.db_service.save_feedback(new_feedback):
+                        st.success("Feedback saved!")
+                    else:
+                        st.error("Error saving feedback")
 
 def compliance_analysis_page():
     """Main compliance analysis page."""
@@ -216,7 +249,7 @@ def compliance_analysis_page():
     checklist_items = db_service.get_checklist_items()
     
     # Display results
-    display_compliance_results(results, checklist_items)
+    display_compliance_results(results, checklist_items, manuscript)
 
 if __name__ == "__main__":
     st.set_page_config(page_title="Detailed Results", layout="wide")

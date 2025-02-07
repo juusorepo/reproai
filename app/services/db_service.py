@@ -5,6 +5,7 @@ from typing import Dict, Any, List, Optional
 from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.checklist_item import ChecklistItem
+from app.models.feedback import Feedback
 from datetime import datetime
 
 class DatabaseService:
@@ -16,12 +17,13 @@ class DatabaseService:
         self.manuscripts: Collection = self.db.manuscripts
         self.compliance_results: Collection = self.db.compliance_results
         self.checklist_items: Collection = self.db.checklist_items
+        self.feedback: Collection = self.db.feedback
         
         # Create indexes
         self._create_indexes()
     
     def _create_indexes(self):
-        """Create necessary indexes for collections."""
+        """Create database indexes."""
         # Manuscript collection indexes
         self.manuscripts.create_index("doi", unique=True)
         
@@ -32,6 +34,10 @@ class DatabaseService:
         # Checklist items collection indexes
         self.checklist_items.create_index("item_id", unique=True)
         self.checklist_items.create_index("category")
+        
+        # New feedback indexes
+        self.feedback.create_index([("doi", 1), ("item_id", 1)])
+        self.feedback.create_index("created_at")
     
     def save_manuscript(self, manuscript: Manuscript) -> str:
         """
@@ -114,17 +120,24 @@ class DatabaseService:
         query = {"category": category} if category else {}
         return list(self.checklist_items.find(query).sort("item_id", 1))
     
-    def get_compliance_results(self, doi: str) -> List[Dict[str, Any]]:
-        """
-        Get all compliance results for a manuscript.
+    def get_compliance_results(self, doi: str) -> List[ComplianceResult]:
+        """Get compliance results for a manuscript.
         
         Args:
             doi: DOI of the manuscript
             
         Returns:
-            List of compliance results
+            List of ComplianceResult objects
         """
-        return list(self.compliance_results.find({"doi": doi}))
+        try:
+            results = []
+            cursor = self.compliance_results.find({"doi": doi})
+            for doc in cursor:
+                results.append(ComplianceResult.from_dict(doc))
+            return results
+        except Exception as e:
+            print(f"Error getting compliance results: {str(e)}")
+            return []
     
     def get_manuscript(self, doi: str) -> Optional[Manuscript]:
         """
@@ -147,3 +160,79 @@ class DatabaseService:
             List of manuscript documents
         """
         return list(self.manuscripts.find())
+
+    def get_all_manuscripts(self) -> List[Manuscript]:
+        """Get all manuscripts from the database.
+        
+        Returns:
+            List of Manuscript objects
+        """
+        try:
+            manuscripts = []
+            cursor = self.manuscripts.find()
+            for doc in cursor:
+                manuscripts.append(Manuscript.from_dict(doc))
+            return manuscripts
+        except Exception as e:
+            print(f"Error getting manuscripts: {str(e)}")
+            return []
+
+    def save_feedback(self, feedback: Feedback) -> bool:
+        """Save user feedback for a compliance result.
+        
+        Args:
+            feedback: Feedback instance to save
+            
+        Returns:
+            bool: True if successful, False if error
+        """
+        try:
+            # Convert to dict and save
+            feedback_dict = feedback.to_dict()
+            self.feedback.update_one(
+                {"doi": feedback.doi, "item_id": feedback.item_id},
+                {"$set": feedback_dict},
+                upsert=True
+            )
+            return True
+        except Exception as e:
+            print(f"Error saving feedback: {str(e)}")
+            return False
+    
+    def get_feedback(self, doi: str, item_id: str) -> Optional[Feedback]:
+        """Get feedback for a specific compliance result.
+        
+        Args:
+            doi: Manuscript DOI
+            item_id: Checklist item ID
+            
+        Returns:
+            Feedback instance if found, None otherwise
+        """
+        try:
+            feedback_dict = self.feedback.find_one({"doi": doi, "item_id": item_id})
+            if feedback_dict:
+                return Feedback.from_dict(feedback_dict)
+            return None
+        except Exception as e:
+            print(f"Error getting feedback: {str(e)}")
+            return None
+    
+    def get_all_feedback(self, doi: str) -> List[Feedback]:
+        """Get all feedback for a manuscript.
+        
+        Args:
+            doi: Manuscript DOI
+            
+        Returns:
+            List of Feedback instances
+        """
+        try:
+            feedback_list = []
+            cursor = self.feedback.find({"doi": doi})
+            for feedback_dict in cursor:
+                feedback_list.append(Feedback.from_dict(feedback_dict))
+            return feedback_list
+        except Exception as e:
+            print(f"Error getting all feedback: {str(e)}")
+            return []

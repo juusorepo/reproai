@@ -38,12 +38,20 @@ class Manuscript:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Manuscript":
+    def from_dict(cls, data: dict) -> 'Manuscript':
+        """Create a Manuscript instance from a dictionary.
+        
+        Args:
+            data: Dictionary containing manuscript data
+            
+        Returns:
+            Manuscript instance
+        """
         return cls(
             doi=data["doi"],
             title=data["title"],
             authors=data["authors"],
-            abstract=data["abstract"],
+            abstract=data.get("abstract", ""),
             design=data.get("design"),
             status=data.get("status", "processed"),
             analysis_date=data.get("analysis_date"),
