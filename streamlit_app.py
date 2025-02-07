@@ -120,6 +120,11 @@ with tab1:
                             doi = db_service.save_manuscript(manuscript)
                             add_log(f"Successfully saved with DOI: {doi}")
                             
+                            # Run compliance analysis
+                            add_log("Running compliance analysis...")
+                            results = compliance_analyzer.analyze_compliance(pdf_text, doi)
+                            add_log(f"Analysis complete. Found {len(results)} results.")
+                            
                             # Store manuscript in session state
                             st.session_state.current_manuscript = manuscript
                             
