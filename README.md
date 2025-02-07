@@ -1,32 +1,75 @@
-# Scientific Manuscript Analysis App
+# ReproAI - Manuscript Compliance Analysis Tool
 
-A Streamlit-based web application for analyzing scientific manuscripts in PDF format.
+A Streamlit-based tool for analyzing scientific manuscripts against reporting guidelines.
 
 ## Features
-- PDF text extraction
-- Automatic metadata extraction (title, authors, abstract) using GPT-4
-- MongoDB storage for analysis results
-- User-friendly interface for manuscript upload and analysis
 
-## Setup
+- Upload and analyze PDF manuscripts
+- Extract metadata automatically
+- Check compliance against Nature Human Behavior checklist
+- Generate detailed compliance reports
+- Interactive visualization of compliance results
 
-1. Install dependencies:
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/reproai.git
+cd reproai
+```
+
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Create a `.env` file in the root directory with:
-```
-OPENAI_API_KEY=your-api-key
-MONGODB_URI=your-mongodb-uri
+## Environment Setup
+
+1. Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
 ```
 
-3. Run the application:
+2. Fill in your environment variables in `.env`:
+- `MONGODB_URI`: Your MongoDB connection string
+- `OPENAI_API_KEY`: Your OpenAI API key
+
+## Running the App Locally
+
 ```bash
 streamlit run streamlit_app.py
 ```
 
-## Project Structure
-- `/app/services`: Core services for PDF processing and metadata extraction
-- `/app/models`: Data models
-- `streamlit_app.py`: Main application file
+## Deploying to Streamlit Cloud
+
+1. Push your code to GitHub
+2. Connect your repository to Streamlit Cloud
+3. Add your environment variables in Streamlit Cloud:
+   - Go to your app's settings
+   - Add the following in the "Secrets" section:
+   ```toml
+   [secrets]
+   MONGODB_URI = "your_actual_mongodb_uri"
+   OPENAI_API_KEY = "your_actual_openai_key"
+   ```
+
+## Usage
+
+1. Upload a scientific manuscript (PDF)
+2. The tool will automatically:
+   - Extract metadata
+   - Analyze compliance with reporting guidelines
+   - Generate a detailed report
+   - Show compliance statistics
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
