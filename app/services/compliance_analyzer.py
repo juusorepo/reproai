@@ -1,3 +1,18 @@
+"""
+Compliance Analyzer Service
+-------------------------
+
+This module provides the ComplianceAnalyzer class which is responsible for analyzing
+manuscripts for reproducibility compliance. It uses OpenAI's API to analyze the text
+and determine compliance with various reproducibility criteria.
+
+The analyzer:
+1. Breaks down the manuscript into sections
+2. Analyzes each section against predefined compliance criteria
+3. Generates detailed explanations and extracts relevant quotes
+4. Stores the results in the database
+"""
+
 import os
 from typing import Dict, Any, List
 from datetime import datetime
@@ -10,11 +25,27 @@ from ..models.compliance_result import ComplianceResult
 from ..services.db_service import DatabaseService
 
 class ComplianceAnalyzer:
+    """A class for analyzing manuscript reproducibility compliance.
+    
+    This class uses OpenAI's API to analyze manuscripts against a set of
+    reproducibility criteria. For each criterion, it determines compliance
+    level, provides explanations, and extracts supporting quotes.
+    
+    Attributes:
+        api_key (str): OpenAI API key
+        db_service (DatabaseService): Database service for storing results
+    """
+    
     # GPT-4 Turbo has a 128k token limit, using ~100k for text to leave room for prompt and response
     MAX_CONTEXT_LENGTH = 400000  # ~100k tokens assuming 4 chars per token
 
     def __init__(self, api_key: str, db_service: DatabaseService):
-        """Initialize the compliance analyzer."""
+        """Initialize the ComplianceAnalyzer.
+        
+        Args:
+            api_key: OpenAI API key
+            db_service: Database service instance
+        """
         self.api_key = api_key
         self.db_service = db_service
         openai.api_key = api_key
@@ -27,7 +58,22 @@ class ComplianceAnalyzer:
         return text[-self.MAX_CONTEXT_LENGTH:]
 
     def analyze_item(self, manuscript: Manuscript, text: str, checklist_item: Dict[str, Any]) -> Dict[str, Any]:
-        """Analyze a single checklist item for compliance."""
+        """Analyze a single checklist item for compliance.
+        
+        Uses OpenAI to:
+        1. Determine if the manuscript complies with the item
+        2. Generate an explanation for the compliance level
+        3. Extract relevant quotes from the text
+        4. Identify which section contains the evidence
+        
+        Args:
+            manuscript: The manuscript to analyze
+            text: The text to analyze
+            item: The checklist item to analyze
+            
+        Returns:
+            Dictionary containing the analysis results
+        """
         print(f"Analyzing item {checklist_item['item_id']}: {checklist_item['question']}")
         
         try:
@@ -127,7 +173,23 @@ class ComplianceAnalyzer:
             return error_result
 
     def analyze_compliance(self, text: str, doi: str, save_to_db: bool = True, debug: bool = False) -> List[Dict[str, Any]]:
-        """Analyze manuscript compliance with all checklist items."""
+        """Analyze manuscript compliance with all checklist items.
+        
+        This method:
+        1. Gets the checklist items from the database
+        2. Analyzes each item using OpenAI
+        3. Stores the results in the database
+        4. Updates the manuscript's analysis date
+        
+        Args:
+            text: The text to analyze
+            doi: The DOI of the manuscript
+            save_to_db: Whether to save the results to the database
+            debug: Whether to print debug information
+            
+        Returns:
+            List of compliance results
+        """
         print(f"\nStarting compliance analysis for manuscript with DOI: {doi}")
         print(f"Text length: {len(text)} characters")
         

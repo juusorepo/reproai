@@ -1,3 +1,20 @@
+"""
+ReproAI - Manuscript Reproducibility Analysis Tool
+------------------------------------------------
+
+This is the main Streamlit application file that provides the web interface for:
+1. Uploading and processing scientific manuscripts
+2. Viewing compliance analysis results
+3. Providing feedback on the analysis
+
+The app uses a tab-based interface with three main sections:
+- Manuscript: For uploading and selecting manuscripts
+- Results Summary: High-level overview of compliance
+- Detailed Results: In-depth analysis with feedback options
+
+Author: ReproAI Team
+"""
+
 import streamlit as st
 import os
 from dotenv import load_dotenv
@@ -22,21 +39,29 @@ metadata_extractor = MetadataExtractor(os.getenv("OPENAI_API_KEY"))
 db_service = DatabaseService(os.getenv("MONGODB_URI"))
 compliance_analyzer = ComplianceAnalyzer(os.getenv("OPENAI_API_KEY"), db_service)
 
-# Initialize session state
-if 'log_messages' not in st.session_state:
-    st.session_state.log_messages = []
+# Initialize session state variables if they don't exist
 if 'current_manuscript' not in st.session_state:
     st.session_state.current_manuscript = None
+if 'log_messages' not in st.session_state:
+    st.session_state.log_messages = []
 if 'db_service' not in st.session_state:
     st.session_state.db_service = db_service
 
 def add_log(message: str):
-    """Add a timestamped message to the log"""
+    """Add a timestamped message to the log.
+    
+    Args:
+        message: The message to add to the log
+    """
     timestamp = datetime.now().strftime("%H:%M:%S")
     st.session_state.log_messages.append(f"[{timestamp}] {message}")
 
 def display_manuscript_selector():
-    """Display a list of analyzed manuscripts and allow selection."""
+    """Display a list of analyzed manuscripts and allow selection.
+    
+    Returns:
+        Manuscript: The selected manuscript or None if no selection made
+    """
     # Get all manuscripts from database
     manuscripts = db_service.get_all_manuscripts()
     
@@ -61,6 +86,18 @@ def display_manuscript_selector():
     return None
 
 def process_uploaded_file(uploaded_file):
+    """Process uploaded PDF file.
+    
+    This function:
+    1. Saves the uploaded file temporarily
+    2. Extracts text using PDFExtractor
+    3. Extracts metadata using OpenAI
+    4. Creates and saves a Manuscript object
+    5. Runs compliance analysis
+    
+    Args:
+        uploaded_file: The uploaded PDF file from Streamlit
+    """
     # Create columns for better layout
     col1, col2 = st.columns([2, 1])
     
@@ -167,7 +204,11 @@ def process_uploaded_file(uploaded_file):
                 st.text(msg)
 
 def display_compliance_results(manuscript: Manuscript):
-    """Display compliance analysis results."""
+    """Display compliance analysis results.
+    
+    Args:
+        manuscript: The manuscript object
+    """
     if not manuscript:
         st.warning("No manuscript selected")
         return
