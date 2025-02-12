@@ -350,8 +350,8 @@ def main():
     # Create tabs for different views
     manuscript_tab, summary_tab, results_tab, checklist_tab = st.tabs([
         "📄 Manuscript", 
-        "📊 Results Summary",
-        "🔍 Detailed Results",
+        "📊 Results",
+        "🔍 Review",
         "📋 Checklist"
     ])
     
@@ -488,7 +488,6 @@ def main():
                     st.error(f"Error processing manuscript: {str(e)}")
     
     with summary_tab:
-        st.header("Results Summary")
         summary_view_page()
 
     with results_tab:

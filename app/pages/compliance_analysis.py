@@ -26,7 +26,7 @@ def calculate_compliance_score(results: List[Dict[str, Any]]) -> float:
         "Partial": 0.5
     }
     valid_scores = [scores[r["compliance"]] for r in results if r["compliance"] != "n/a"]
-    return round(sum(valid_scores) / len(valid_scores) * 100, 1) if valid_scores else 0.0
+    return int(round(sum(valid_scores) / len(valid_scores) * 100)) if valid_scores else 0
 
 def create_summary_chart(results: List[Dict[str, Any]]) -> go.Figure:
     """Create summary chart of compliance results."""
@@ -226,7 +226,7 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
 def compliance_analysis_page():
     """Main compliance analysis page."""
     # Use smaller font for title
-    st.markdown("<h2 style='font-size: 24px;'>Detailed Results</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 24px;'>Review Results</h2>", unsafe_allow_html=True)
     
     # Get current manuscript
     manuscript = st.session_state.get("current_manuscript")
@@ -252,5 +252,5 @@ def compliance_analysis_page():
     display_compliance_results(results, checklist_items, manuscript)
 
 if __name__ == "__main__":
-    st.set_page_config(page_title="Detailed Results", layout="wide")
+    st.set_page_config(page_title="Review", layout="wide")
     compliance_analysis_page()
