@@ -37,13 +37,13 @@ class Manuscript:
     def __init__(
         self,
         doi: str,
-        title: str,
-        authors: List[str],
-        abstract: str,
-        design: Optional[str] = None,
+        title: str = "",
+        authors: List[str] = None,
+        abstract: str = "",
+        design: str = "",
         status: str = "processed",
         analysis_date: Optional[datetime] = None,
-        pdf_path: Optional[str] = None,
+        pdf_path: str = "",
         processed_at: Optional[datetime] = None
     ):
         """Initialize a new Manuscript instance.
@@ -53,15 +53,15 @@ class Manuscript:
             title: The manuscript title
             authors: List of author names
             abstract: Abstract of the manuscript
-            design: Study design type (default: None)
-            status: Status of the manuscript analysis (default: "processed")
-            analysis_date: When the manuscript was analyzed (default: now)
-            pdf_path: Path to the manuscript PDF (default: None)
-            processed_at: When the manuscript was processed (default: None)
+            design: Study design type
+            status: Status of the manuscript analysis
+            analysis_date: When the manuscript was analyzed
+            pdf_path: Path to the manuscript PDF
+            processed_at: When the manuscript was processed
         """
         self.doi = doi
         self.title = title
-        self.authors = authors
+        self.authors = authors or []
         self.abstract = abstract
         self.design = design
         self.status = status
@@ -101,12 +101,12 @@ class Manuscript:
         """
         return cls(
             doi=data["doi"],
-            title=data["title"],
-            authors=data["authors"],
+            title=data.get("title", ""),
+            authors=data.get("authors", []),
             abstract=data.get("abstract", ""),
-            design=data.get("design"),
+            design=data.get("design", ""),
             status=data.get("status", "processed"),
             analysis_date=data.get("analysis_date"),
-            pdf_path=data.get("pdf_path"),
+            pdf_path=data.get("pdf_path", ""),
             processed_at=data.get("processed_at")
         )

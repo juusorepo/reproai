@@ -1,0 +1,32 @@
+You are analyzing compliance results for a scientific manuscript and creating a comprehensive summary.
+
+MANUSCRIPT INFORMATION:
+{manuscript}
+
+COMPLIANCE RESULTS:
+{results}
+
+TASK:
+Create a detailed but concise summary of the manuscript's compliance with reproducibility guidelines. Your summary should include:
+
+1. OVERVIEW:
+   - Overall compliance level
+   - Number of items checked and their distribution (Yes/No/Partial)
+   - General assessment of reproducibility
+
+2. KEY FINDINGS:
+   - Areas of strong compliance
+   - Areas needing improvement
+   - Notable patterns or trends
+
+3. RECOMMENDATIONS:
+   - Specific, actionable recommendations for improving reproducibility
+   - Prioritized list of what should be addressed first
+   - Suggestions for documentation improvements
+
+FORMAT:
+- Write in clear, professional language
+- Use bullet points for clarity where appropriate
+- Be specific and reference actual findings from the results
+- Keep the total summary concise (around 500 words)
+- Focus on actionable insights

@@ -1,0 +1,29 @@
+You are analyzing compliance results for a scientific manuscript and creating a category-based summary.
+
+MANUSCRIPT INFORMATION:
+{manuscript}
+
+COMPLIANCE RESULTS:
+{results}
+
+CATEGORIES TO ANALYZE:
+{categories}
+
+TASK:
+Create a JSON summary for each category. The JSON must follow this exact structure, with the specified categories:
+
+{{
+    "categories": {{
+        "category_name": {{
+            "summary": "Brief summary of what needs improvement in this category, or 'ok.' if nothing to improve",
+            "severity": "high|medium|low"
+        }}
+    }}
+}}
+
+REQUIREMENTS:
+1. Include ALL listed categories in the response
+2. For categories with no issues, set summary to "ok." and severity to "low"
+3. Keep each summary concise (max 50 words)
+4. Assign severity based on impact on reproducibility
+5. Return ONLY valid JSON without any other text

@@ -1,11 +1,11 @@
-import openai
 from typing import Dict, Any
 import json
 from pathlib import Path
+from .llm_service import get_llm_response, MAX_TOKENS_INPUT, CHARS_PER_TOKEN
 
 class MetadataExtractor:
     def __init__(self, api_key: str):
-        openai.api_key = api_key
+        self.api_key = api_key
         prompt_file = Path(__file__).parent.parent / "prompts" / "metadata_extraction.txt"
         with open(prompt_file, 'r', encoding='utf-8') as f:
             self.prompt_template = f.read()
@@ -21,26 +21,29 @@ class MetadataExtractor:
             Dictionary containing title, authors, abstract, and study design
         """
         try:
+            # For metadata extraction, we only need the first part of the manuscript
+            # This typically contains the title, authors, abstract, and study design
+            # Use approximately 25% of our max input tokens
+            max_chars = (MAX_TOKENS_INPUT // 4) * CHARS_PER_TOKEN
+            text_for_metadata = text[:max_chars]
+            
             # Format the prompt with the manuscript text
             # Use str.replace instead of format to avoid issues with special characters
-            prompt = self.prompt_template.replace("{text}", text[:5000])
+            prompt = self.prompt_template.replace("{text}", text_for_metadata)
             
             print("\nPrompt sent to LLM:")
             print("-" * 80)
             print(prompt)
             print("-" * 80)
 
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "Extract metadata from scientific manuscripts. Return only the requested fields as a valid JSON object."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.1
+            # Get response from LLM service
+            raw_response = get_llm_response(
+                prompt=prompt,
+                system_prompt="Extract metadata from scientific manuscripts. Return only the requested fields as a valid JSON object.",
+                temperature=0.1,
+                max_tokens_output=2000  # Metadata response should be relatively short
             )
 
-            # Get and log the raw response
-            raw_response = response.choices[0].message.content
             print("\nRaw LLM response:")
             print("-" * 80)
             print(raw_response)

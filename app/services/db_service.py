@@ -1,3 +1,11 @@
+"""
+Database Service
+--------------
+
+This module provides database functionality for storing and retrieving
+manuscript data, compliance results, and summaries.
+"""
+
 from pymongo import MongoClient
 from pymongo.database import Database
 from pymongo.collection import Collection
@@ -7,6 +15,7 @@ from app.models.compliance_result import ComplianceResult
 from app.models.checklist_item import ChecklistItem
 from app.models.feedback import Feedback
 from datetime import datetime
+from bson import ObjectId
 
 class DatabaseService:
     def __init__(self, uri: str):
@@ -18,6 +27,7 @@ class DatabaseService:
         self.compliance_results: Collection = self.db.compliance_results
         self.checklist_items: Collection = self.db.checklist_items
         self.feedback: Collection = self.db.feedback
+        self.compliance_summaries: Collection = self.db.compliance_summaries
         
         # Create indexes
         self._create_indexes()
@@ -38,6 +48,10 @@ class DatabaseService:
         # New feedback indexes
         self.feedback.create_index([("doi", 1), ("item_id", 1)])
         self.feedback.create_index("created_at")
+        
+        # Compliance summaries indexes
+        self.compliance_summaries.create_index("doi", unique=True)
+        self.compliance_summaries.create_index("created_at")
     
     def save_manuscript(self, manuscript: Manuscript) -> str:
         """
@@ -236,3 +250,43 @@ class DatabaseService:
         except Exception as e:
             print(f"Error getting all feedback: {str(e)}")
             return []
+
+    def save_summary(self, doi: str, overview: str, category_summaries: List[Dict[str, Any]]):
+        """Save a compliance summary to database.
+        
+        Args:
+            doi: DOI of the manuscript
+            overview: Overview section of the summary
+            category_summaries: List of category summaries, each containing:
+                - category: Category name
+                - summary: Summary text or "ok."
+                - severity: high/medium/low
+                - original_results: List of original compliance results for this category
+        """
+        summary_doc = {
+            "doi": doi,
+            "overview": overview,
+            "category_summaries": category_summaries,
+            "created_at": datetime.now()
+        }
+        
+        self.compliance_summaries.update_one(
+            {"doi": doi},
+            {"$set": summary_doc},
+            upsert=True
+        )
+        
+    def get_summary(self, doi: str) -> Optional[Dict[str, Any]]:
+        """Get the compliance summary for a manuscript.
+        
+        Args:
+            doi: DOI of the manuscript
+            
+        Returns:
+            Dictionary containing:
+                - overview: Overview section
+                - category_summaries: List of category summaries
+                - created_at: Timestamp
+            Returns None if not found
+        """
+        return self.compliance_summaries.find_one({"doi": doi})
