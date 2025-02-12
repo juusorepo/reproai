@@ -1,0 +1,18 @@
+Given the following checklist for analyzing scientific texts, your task is to refine and structure the checklist to enhance clarity for an automated evaluation system. Specifically, follow these steps:
+
+Preserve Structure & Original Wording: Retain the original structure of the checklist and ensure that each item remains logically categorized.
+Split Complex Items into Subitems: If a checklist item contains multiple distinct aspects, break it into separate subitems, ensuring that each question focuses on a single issue.
+Maintain Question Format: Convert each checklist item (or subitem) into a clear yes/no question to be assessed against a paper. If no split is needed, copy the original as the question.
+Output in Structured JSON Format: Return the refined checklist as structured JSON, using the following format:
+
+[
+    {
+        "item_id": "1",
+        "original": "[Original checklist item text]",
+        "question": "[Refined checklist question(s)]",
+        "section": "[Section or category title from the checklist document]",
+        "title": "[Title of checklist item]",
+        "source": "[Title of the checklist document]",
+        "created_at": ""
+    }
+]

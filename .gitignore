@@ -1,5 +1,28 @@
-.env
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Logs and databases
+*.log
+logs/
+data/
+
+# Development specific
+*_backup_*/
+
+# OS specific
 .DS_Store
-.streamlit/secrets.toml
+Thumbs.db
+scripts/sync_environments.py
+reproai.code-workspace
