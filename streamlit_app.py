@@ -22,10 +22,12 @@ from app.services.pdf_extractor import PDFExtractor
 from app.services.metadata_extractor import MetadataExtractor
 from app.services.db_service import DatabaseService
 from app.services.compliance_analyzer import ComplianceAnalyzer
+from app.services.summarize_service import SummarizeService
 from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.feedback import Feedback
 from app.pages.compliance_analysis import compliance_analysis_page
+from app.pages.summary_view import summary_view_page
 import json
 from datetime import datetime
 import tempfile
@@ -38,6 +40,7 @@ load_dotenv()
 metadata_extractor = MetadataExtractor(os.getenv("OPENAI_API_KEY"))
 db_service = DatabaseService(os.getenv("MONGODB_URI"))
 compliance_analyzer = ComplianceAnalyzer(os.getenv("OPENAI_API_KEY"), db_service)
+summarize_service = SummarizeService(os.getenv("OPENAI_API_KEY"), db_service)
 
 # Initialize session state variables if they don't exist
 if 'current_manuscript' not in st.session_state:
@@ -313,18 +316,8 @@ def main():
     
     with summary_tab:
         st.header("Results Summary")
-        if st.session_state.current_manuscript:
-            st.info("""
-            This section will provide a high-level summary of the compliance analysis results including:
-            - Overall compliance statistics
-            - Key areas needing improvement
-            - Design-specific recommendations based on the manuscript type
-            
-            The summary will help you quickly understand the main findings before diving into the detailed results.
-            """)
-        else:
-            st.warning("Please select a manuscript to view results")
-    
+        summary_view_page()
+
     with results_tab:
         if st.session_state.current_manuscript:
             compliance_analysis_page()

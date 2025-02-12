@@ -7,22 +7,21 @@ COMPLIANCE RESULTS:
 {results}
 
 TASK:
-Create a concise overview of the manuscript's compliance with reproducibility guidelines. Your summary should include:
+Create a concise overview of the manuscript's compliance with reporting guidelines. Your summary should include:
 
 1. OVERVIEW:
-   - Overall compliance level (percentage of Yes/No/Partial/n/a)
-   - General assessment of reproducibility strengths and weaknesses
-   - Most critical gaps in reproducibility
+   - A sentence on the overall compliance level
+   - Strengths: 1-2 sentences on strengths, focusing on issues critical to reproducibility.
+   - Gaps: 1-2 sentences on most critical gaps
 
 2. KEY RECOMMENDATIONS:
-   - List 3-5 most important recommendations
+   - List 1-3 most important recommendations
    - For each recommendation:
      * What needs to be added/changed
      * Why it's important
-     * Priority level (High/Medium/Low)
 
 FORMAT:
-- Write in clear, professional language
+- Write in clear, concise, professional language
 - Use bullet points for clarity
-- Keep the total summary under 300 words
+- Keep the total summary under 150 words
 - Focus on actionable insights
