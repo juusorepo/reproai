@@ -2,6 +2,12 @@
 
 A Streamlit-based tool for analyzing scientific manuscripts against reporting guidelines. ReproAI uses OpenAI's GPT-4 to analyze manuscripts and provide detailed feedback on their compliance with reproducibility guidelines.
 
+## Requirements
+
+- Python 3.13 or higher
+- MongoDB database (local or Atlas)
+- OpenAI API key
+
 ## Features
 
 - **PDF Processing**

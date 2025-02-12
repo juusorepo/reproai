@@ -12,30 +12,40 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
+def format_compliance_status(status: str):
+    """Format compliance status with color."""
+    colors = {
+        "Yes": "#2ecc71",
+        "No": "#e74c3c",
+        "Partial": "#f1c40f",
+        "n/a": "#95a5a6"
+    }
+    return f"<span style='color: {colors[status]}'>{status}</span>"
+
 def create_summary_chart(results: list) -> go.Figure:
     """Create summary chart of compliance results."""
     # Count compliance statuses
-    status_counts = {"Yes": 0, "No": 0, "Partial": 0}
+    status_counts = {"Yes": 0, "No": 0, "Partial": 0, "n/a": 0}  
     for result in results:
-        if result.compliance != "n/a":
-            status_counts[result.compliance] += 1
+        status_counts[result.compliance] += 1
             
     # Create horizontal bar chart
     fig = go.Figure()
     
     # Add bars for each status
-    colors = {"Yes": "#2ecc71", "No": "#e74c3c", "Partial": "#f1c40f"}
+    colors = {"Yes": "#2ecc71", "No": "#e74c3c", "Partial": "#f1c40f", "n/a": "#95a5a6"}  
     for status, count in status_counts.items():
-        fig.add_trace(go.Bar(
-            name=status,
-            y=[1],
-            x=[count],
-            orientation='h',
-            marker=dict(color=colors[status]),
-            text=[f"{status}: {count}"],
-            hoverinfo='text',
-            hovertemplate='%{text}'  # Fix Plotly chart with correct hover template
-        ))
+        if count > 0:  
+            fig.add_trace(go.Bar(
+                name=status,
+                y=[1],
+                x=[count],
+                orientation='h',
+                marker=dict(color=colors[status]),
+                text=[f"{status}: {count}"],
+                hoverinfo='text',
+                hovertemplate='%{text}'
+            ))
     
     # Update layout
     fig.update_layout(
@@ -80,9 +90,10 @@ def summary_view_page():
         scores = {
             "Yes": 1.0,
             "No": 0.0,
-            "Partial": 0.5
+            "Partial": 0.5,
+            "n/a": None  
         }
-        valid_scores = [scores[r.compliance] for r in results if r.compliance != "n/a"]
+        valid_scores = [scores[r.compliance] for r in results if scores[r.compliance] is not None]
         compliance_score = int(round(sum(valid_scores) / len(valid_scores) * 100)) if valid_scores else 0
         
         # Create columns for score display
@@ -121,23 +132,37 @@ def summary_view_page():
     severity_colors = {
         'HIGH': '🔴',
         'MEDIUM': '🟡',
-        'LOW': '🟢'
+        'LOW': '🟢',
+        'NONE': '⚫'  # For categories with all n/a
     }
     severity_order = {
         'HIGH': 0,
         'MEDIUM': 1,
-        'LOW': 2
+        'LOW': 2,
+        'NONE': 3
     }
     
     # Create DataFrame for categories
     data = []
     for cat in summary["category_summaries"]:
-        severity = cat['severity'].upper()
+        # Get all compliance values for this category
+        compliances = [r['compliance'] for r in cat['original_results']]
+        
+        # Determine severity based on compliance values
+        if all(c == 'n/a' for c in compliances):
+            severity = 'NONE'
+        elif all(c in ['Yes', 'n/a'] for c in compliances) and any(c == 'Yes' for c in compliances):
+            severity = 'LOW'  
+        elif all(c in ['No', 'n/a'] for c in compliances) and any(c == 'No' for c in compliances):
+            severity = 'HIGH'  
+        else:
+            severity = 'MEDIUM'  
+            
         severity_indicator = severity_colors.get(severity, '')
         data.append({
             'Category': f"{severity_indicator} {cat['category']}",
             'Summary': cat['summary'],
-            'SeverityOrder': severity_order.get(severity, 3)  # For sorting
+            'SeverityOrder': severity_order.get(severity, 4)  
         })
         
     df = pd.DataFrame(data)
@@ -169,18 +194,30 @@ def summary_view_page():
     # Sort categories by severity for detailed results
     sorted_categories = sorted(
         summary["category_summaries"],
-        key=lambda x: severity_order.get(x['severity'].upper(), 3)
+        key=lambda x: severity_order.get(x['severity'].upper(), 4)
     )
     
     for cat in sorted_categories:
-        severity = cat['severity'].upper()
+        # Get all compliance values for this category
+        compliances = [r['compliance'] for r in cat['original_results']]
+        
+        # Determine severity based on compliance values - same logic as above
+        if all(c == 'n/a' for c in compliances):
+            severity = 'NONE'
+        elif all(c in ['Yes', 'n/a'] for c in compliances) and any(c == 'Yes' for c in compliances):
+            severity = 'LOW'  # All Yes or n/a, with at least one Yes
+        elif all(c in ['No', 'n/a'] for c in compliances) and any(c == 'No' for c in compliances):
+            severity = 'HIGH'  # All No or n/a, with at least one No
+        else:
+            severity = 'MEDIUM'  # Mixed results
+            
         severity_indicator = severity_colors.get(severity, '')
         
         with st.expander(f"{severity_indicator} {cat['category']} ({len(cat['original_results'])} items)"):
             if cat['original_results']:
                 for result in cat['original_results']:
-                    st.markdown(f"**Question:** {result['question']}")
-                    st.markdown(f"**Compliance:** {result['compliance']}")
+                    st.markdown(f"**Item:** {result['question']}")
+                    st.markdown(f"**Compliance:** {format_compliance_status(result['compliance'])}", unsafe_allow_html=True)
                     st.markdown(f"**Explanation:** {result['explanation']}")
                     if result.get('quote'):
                         st.markdown(f"**Quote:** {result['quote']}")

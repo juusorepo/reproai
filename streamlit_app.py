@@ -98,7 +98,11 @@ def display_manuscript_selector():
     titles = [title for title, _ in options]
     manuscript_map = {title: m for title, m in options}
     
-    selected_title = st.selectbox("", titles)
+    selected_title = st.selectbox(
+        "Select manuscript",
+        titles,
+        label_visibility="collapsed"
+    )
     if selected_title:
         selected_manuscript = manuscript_map[selected_title]
         st.session_state.current_manuscript = selected_manuscript
@@ -308,7 +312,7 @@ def display_compliance_results(manuscript: Manuscript):
             
             # Comments field
             comments = st.text_area(
-                "Comments",
+                "Feedback comments",
                 value=feedback.comments if feedback else "",
                 key=f"comments_{result.item_id}",
                 placeholder="Add your comments here..."
