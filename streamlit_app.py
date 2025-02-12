@@ -142,47 +142,21 @@ def process_uploaded_file(uploaded_file):
                 try:
                     # Extract text from PDF
                     add_log("Extracting text from PDF...")
-                    try:
-                        pdf_text = PDFExtractor.extract_text(tmp_path)
-                        add_log(f"Extracted {len(pdf_text)} characters")
-                        # Debug: Check for problematic characters
-                        add_log("Checking for problematic characters in PDF text...")
-                        problematic = []
-                        for i, char in enumerate(pdf_text):
-                            try:
-                                char.encode('charmap')
-                            except UnicodeEncodeError:
-                                problematic.append((i, char, hex(ord(char))))
-                        if problematic:
-                            add_log(f"Found {len(problematic)} problematic characters:")
-                            for pos, char, code in problematic[:10]:  # Show first 10
-                                add_log(f"Position {pos}: '{char}' (Unicode {code})")
-                    except Exception as e:
-                        error_details = get_error_details(e)
-                        add_log(f"PDF extraction error: {str(e)}")
-                        add_log("Error details:")
-                        for line in error_details.split('\n'):
-                            add_log(line)
-                        raise
+                    
+                    pdf_text = PDFExtractor.extract_text(tmp_path)
+                    add_log(f"Extracted {len(pdf_text)} characters")
                     
                     # Extract metadata
                     add_log("Analyzing manuscript with LLM...")
-                    try:
-                        metadata = metadata_extractor.extract_metadata(pdf_text)
-                    except Exception as e:
-                        error_details = get_error_details(e)
-                        add_log(f"Metadata extraction error: {str(e)}")
-                        add_log("Error details:")
-                        for line in error_details.split('\n'):
-                            add_log(line)
-                        raise
+                    
+                    metadata = metadata_extractor.extract_metadata(pdf_text)
                     
                     # Check if results already exist
                     existing_results = db_service.get_compliance_results(metadata["doi"])
                     if existing_results:
-                        st.info(f"Analysis results already exist for DOI: {metadata['doi']}. View them in the Detailed Results tab.")
+                        st.info(f"Analysis results already exist for DOI: {metadata['doi']}")
                         
-                        # Create manuscript object and store in session
+                        # Create manuscript object
                         manuscript = Manuscript(
                             doi=metadata["doi"],
                             title=metadata["title"],
@@ -191,10 +165,6 @@ def process_uploaded_file(uploaded_file):
                             design=metadata.get("design", ""),
                             pdf_path=uploaded_file.name
                         )
-                        st.session_state.current_manuscript = manuscript
-                        
-                        # Display metadata
-                        st.json(metadata)
                         
                         # Add info about existing results
                         st.markdown("---")
@@ -207,6 +177,7 @@ def process_uploaded_file(uploaded_file):
                             run_analysis = True
                         else:
                             run_analysis = False
+                            st.session_state.current_manuscript = manuscript
                     else:
                         run_analysis = True
                     
@@ -265,9 +236,6 @@ def process_uploaded_file(uploaded_file):
                         st.session_state.current_manuscript = manuscript
                         st.session_state.compliance_results = compliance_results
                         st.session_state.compliance_summary = summary
-                        
-                        # Display metadata
-                        st.json(metadata)
                         
                         # Add success message
                         st.success("Manuscript processed successfully! Go to the Detailed Results tab to view results.")
@@ -397,7 +365,125 @@ def main():
         uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
         
         if uploaded_file:
-            process_uploaded_file(uploaded_file)
+            if st.button("Process Manuscript"):
+                # Clear previous log messages
+                st.session_state.log_messages = []
+                try:
+                    # Save uploaded file to temporary file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
+                        tmp_file.write(uploaded_file.getvalue())
+                        tmp_path = tmp_file.name
+                    
+                    try:
+                        # Extract text from PDF
+                        add_log("Extracting text from PDF...")
+                        pdf_text = PDFExtractor.extract_text(tmp_path)
+                        add_log(f"Extracted {len(pdf_text)} characters")
+                        
+                        # Extract metadata
+                        add_log("Analyzing manuscript with LLM...")
+                        metadata = metadata_extractor.extract_metadata(pdf_text)
+                        
+                        # Check if results already exist
+                        existing_results = db_service.get_compliance_results(metadata["doi"])
+                        if existing_results:
+                            st.info(f"Analysis results already exist for DOI: {metadata['doi']}")
+                            
+                            # Create manuscript object
+                            manuscript = Manuscript(
+                                doi=metadata["doi"],
+                                title=metadata["title"],
+                                authors=metadata["authors"],
+                                abstract=metadata.get("abstract", ""),
+                                design=metadata.get("design", ""),
+                                pdf_path=uploaded_file.name
+                            )
+                            
+                            # Add info about existing results
+                            st.markdown("---")
+                            st.markdown("### Existing Analysis Results")
+                            st.write(f"Found {len(existing_results)} compliance results.")
+                            
+                            # Show reanalysis option
+                            if st.button("Run Analysis Again"):
+                                add_log("Starting new analysis...")
+                                run_analysis = True
+                            else:
+                                run_analysis = False
+                                st.session_state.current_manuscript = manuscript
+                        else:
+                            run_analysis = True
+                        
+                        if run_analysis:
+                            # Create manuscript object
+                            manuscript = Manuscript(
+                                doi=metadata["doi"],
+                                title=metadata["title"],
+                                authors=metadata["authors"],
+                                abstract=metadata.get("abstract", ""),
+                                design=metadata.get("design", ""),
+                                pdf_path=uploaded_file.name
+                            )
+                            
+                            # Save to database
+                            add_log("Saving to database...")
+                            doi = db_service.save_manuscript(manuscript)
+                            add_log(f"Successfully saved with DOI: {doi}")
+                            
+                            # Run compliance analysis
+                            add_log("Running compliance analysis...")
+                            
+                            # Get checklist items from database
+                            add_log("Getting checklist items from database...")
+                            checklist_items = db_service.get_checklist_items()
+                            if not checklist_items:
+                                add_log("Error: No checklist items found in database")
+                                st.error("No checklist items found in database. Please add checklist items first.")
+                                return
+                            
+                            add_log(f"Analyzing {len(checklist_items)} compliance items...")
+                            results = compliance_analyzer.analyze_manuscript(manuscript, pdf_text, checklist_items)
+                            add_log(f"Analysis complete. Found {len(results)} results.")
+                            
+                            # Convert results to ComplianceResult objects
+                            add_log("Converting results to ComplianceResult objects...")
+                            compliance_results = []
+                            for result in results:
+                                try:
+                                    compliance_results.append(ComplianceResult.from_dict(result))
+                                except Exception as e:
+                                    add_log(f"Error converting result: {str(e)}")
+                                    continue
+                            
+                            # Run summarize service
+                            add_log("Generating summary of compliance results...")
+                            try:
+                                summary = summarize_service.generate_summary(manuscript, compliance_results)
+                                add_log("Summary generated successfully.")
+                            except Exception as e:
+                                add_log(f"Error generating summary: {str(e)}")
+                                st.error("Error generating summary. Please check the logs.")
+                                return
+                            
+                            # Store results in session state
+                            st.session_state.current_manuscript = manuscript
+                            st.session_state.compliance_results = compliance_results
+                            st.session_state.compliance_summary = summary
+                            
+                            # Add success message
+                            st.success("Manuscript processed successfully! Go to the Detailed Results tab to view results.")
+                        
+                    finally:
+                        # Clean up temporary file
+                        os.unlink(tmp_path)
+                    
+                except Exception as e:
+                    error_details = get_error_details(e)
+                    add_log(f"Error: {str(e)}")
+                    add_log("Full error details:")
+                    for line in error_details.split('\n'):
+                        add_log(line)
+                    st.error(f"Error processing manuscript: {str(e)}")
     
     with summary_tab:
         st.header("Results Summary")
