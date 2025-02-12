@@ -37,10 +37,15 @@ import pandas as pd
 load_dotenv()
 
 # Initialize services
-metadata_extractor = MetadataExtractor(os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+    exit()
+
+metadata_extractor = MetadataExtractor(api_key)
 db_service = DatabaseService(os.getenv("MONGODB_URI"))
-compliance_analyzer = ComplianceAnalyzer(os.getenv("OPENAI_API_KEY"), db_service)
-summarize_service = SummarizeService(os.getenv("OPENAI_API_KEY"), db_service)
+compliance_analyzer = ComplianceAnalyzer(api_key, db_service)
+summarize_service = SummarizeService(api_key, db_service)
 
 # Initialize session state variables if they don't exist
 if 'current_manuscript' not in st.session_state:
@@ -51,13 +56,29 @@ if 'db_service' not in st.session_state:
     st.session_state.db_service = db_service
 
 def add_log(message: str):
-    """Add a timestamped message to the log.
-    
-    Args:
-        message: The message to add to the log
-    """
+    """Add a timestamped log message to session state."""
     timestamp = datetime.now().strftime("%H:%M:%S")
     st.session_state.log_messages.append(f"[{timestamp}] {message}")
+
+def display_logs():
+    """Display all log messages."""
+    if st.session_state.log_messages:
+        for msg in st.session_state.log_messages:
+            st.text(msg)
+
+def get_error_details(e: Exception) -> str:
+    """Get detailed error information."""
+    error_details = []
+    error_details.append(f"Error type: {type(e).__name__}")
+    error_details.append(f"Error message: {str(e)}")
+    
+    # Get the full traceback
+    import traceback
+    tb = traceback.format_exc()
+    error_details.append("\nTraceback:")
+    error_details.append(tb)
+    
+    return "\n".join(error_details)
 
 def display_manuscript_selector():
     """Display a list of analyzed manuscripts and allow selection.
@@ -121,12 +142,40 @@ def process_uploaded_file(uploaded_file):
                 try:
                     # Extract text from PDF
                     add_log("Extracting text from PDF...")
-                    pdf_text = PDFExtractor.extract_text(tmp_path)
-                    add_log(f"Extracted {len(pdf_text)} characters")
+                    try:
+                        pdf_text = PDFExtractor.extract_text(tmp_path)
+                        add_log(f"Extracted {len(pdf_text)} characters")
+                        # Debug: Check for problematic characters
+                        add_log("Checking for problematic characters in PDF text...")
+                        problematic = []
+                        for i, char in enumerate(pdf_text):
+                            try:
+                                char.encode('charmap')
+                            except UnicodeEncodeError:
+                                problematic.append((i, char, hex(ord(char))))
+                        if problematic:
+                            add_log(f"Found {len(problematic)} problematic characters:")
+                            for pos, char, code in problematic[:10]:  # Show first 10
+                                add_log(f"Position {pos}: '{char}' (Unicode {code})")
+                    except Exception as e:
+                        error_details = get_error_details(e)
+                        add_log(f"PDF extraction error: {str(e)}")
+                        add_log("Error details:")
+                        for line in error_details.split('\n'):
+                            add_log(line)
+                        raise
                     
                     # Extract metadata
                     add_log("Analyzing manuscript with LLM...")
-                    metadata = metadata_extractor.extract_metadata(pdf_text)
+                    try:
+                        metadata = metadata_extractor.extract_metadata(pdf_text)
+                    except Exception as e:
+                        error_details = get_error_details(e)
+                        add_log(f"Metadata extraction error: {str(e)}")
+                        add_log("Error details:")
+                        for line in error_details.split('\n'):
+                            add_log(line)
+                        raise
                     
                     # Check if results already exist
                     existing_results = db_service.get_compliance_results(metadata["doi"])
@@ -179,13 +228,45 @@ def process_uploaded_file(uploaded_file):
                         
                         # Run compliance analysis
                         add_log("Running compliance analysis...")
-                        results = compliance_analyzer.analyze_compliance(pdf_text, doi)
+                        
+                        # Get checklist items from database
+                        add_log("Getting checklist items from database...")
+                        checklist_items = db_service.get_checklist_items()
+                        if not checklist_items:
+                            add_log("Error: No checklist items found in database")
+                            st.error("No checklist items found in database. Please add checklist items first.")
+                            return
+                        
+                        add_log(f"Analyzing {len(checklist_items)} compliance items...")
+                        results = compliance_analyzer.analyze_manuscript(manuscript, pdf_text, checklist_items)
                         add_log(f"Analysis complete. Found {len(results)} results.")
                         
-                        # Store manuscript in session state
-                        st.session_state.current_manuscript = manuscript
+                        # Convert results to ComplianceResult objects
+                        add_log("Converting results to ComplianceResult objects...")
+                        compliance_results = []
+                        for result in results:
+                            try:
+                                compliance_results.append(ComplianceResult.from_dict(result))
+                            except Exception as e:
+                                add_log(f"Error converting result: {str(e)}")
+                                continue
                         
-                        # Display results
+                        # Run summarize service
+                        add_log("Generating summary of compliance results...")
+                        try:
+                            summary = summarize_service.generate_summary(manuscript, compliance_results)
+                            add_log("Summary generated successfully.")
+                        except Exception as e:
+                            add_log(f"Error generating summary: {str(e)}")
+                            st.error("Error generating summary. Please check the logs.")
+                            return
+                        
+                        # Store results in session state
+                        st.session_state.current_manuscript = manuscript
+                        st.session_state.compliance_results = compliance_results
+                        st.session_state.compliance_summary = summary
+                        
+                        # Display metadata
                         st.json(metadata)
                         
                         # Add success message
@@ -196,15 +277,19 @@ def process_uploaded_file(uploaded_file):
                     os.unlink(tmp_path)
                 
             except Exception as e:
+                error_details = get_error_details(e)
                 add_log(f"Error: {str(e)}")
+                add_log("Full error details:")
+                for line in error_details.split('\n'):
+                    add_log(line)
                 st.error(f"Error processing manuscript: {str(e)}")
     
     with col2:
-        # Log section
-        with st.expander("Processing Log", expanded=True):
-            # Display log messages
-            for msg in st.session_state.log_messages:
-                st.text(msg)
+        pass
+    
+    # Display processing status
+    st.subheader("Processing Status")
+    display_logs()
 
 def display_compliance_results(manuscript: Manuscript):
     """Display compliance analysis results.

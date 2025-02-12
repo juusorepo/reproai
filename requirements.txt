@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 openai==1.9.0
 pdfminer.six==20221105
 plotly==5.15.0
+jsonschema>=4.17.3

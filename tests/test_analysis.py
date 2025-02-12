@@ -1,3 +1,7 @@
+"""
+Test analysis functionality
+"""
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -36,11 +40,31 @@ def main():
         # Save first 200 chars for debugging
         print("\nFirst 200 characters of text:")
         print(pdf_text[:200])
+        print("-" * 80)
 
         # Extract metadata using LLM
         print("\nExtracting metadata...")
         try:
+            # Add more debugging output
+            print("\nTesting metadata extraction with a small sample first:")
+            test_text = """
+            Test Title
+            
+            Test Author
+            
+            Abstract
+            This is a test abstract.
+            """
+            print("\nTest metadata extraction:")
+            test_metadata = metadata_extractor.extract_metadata(test_text)
+            print("Test metadata result:", test_metadata)
+            print("-" * 80)
+            
+            print("\nNow trying with actual manuscript text...")
             metadata = metadata_extractor.extract_metadata(pdf_text)
+            print("Actual metadata result:", metadata)
+            print("-" * 80)
+            
             # Create Manuscript object
             manuscript = Manuscript(
                 doi=metadata["doi"],
