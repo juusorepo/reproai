@@ -17,7 +17,6 @@ Author: ReproAI Team
 
 import streamlit as st
 import os
-from dotenv import load_dotenv
 from app.services.pdf_extractor import PDFExtractor
 from app.services.metadata_extractor import MetadataExtractor
 from app.services.db_service import DatabaseService
@@ -34,17 +33,14 @@ from datetime import datetime
 import tempfile
 import pandas as pd
 
-# Load environment variables
-load_dotenv()
-
 # Initialize services
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets["OPENAI_API_KEY"]
 if not api_key:
-    st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
-    exit()
+    st.error("OpenAI API key not found in Streamlit secrets.")
+    st.stop()
 
 metadata_extractor = MetadataExtractor(api_key)
-db_service = DatabaseService(os.getenv("MONGODB_URI"))
+db_service = DatabaseService(st.secrets["MONGODB_URI"])
 compliance_analyzer = ComplianceAnalyzer(api_key, db_service)
 summarize_service = SummarizeService(api_key, db_service)
 

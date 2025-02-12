@@ -17,8 +17,9 @@ A Streamlit-based tool for analyzing scientific manuscripts against reporting gu
 
 - **Interactive Interface**
   - Clear visualization of compliance results
-  - Summary dashboard with compliance score
-  - Detailed view of each checklist item
+  - View Results with compliance score and summary
+  - Review page with detailed analysis
+  - Interactive checklist management
   - User feedback system for results
 
 - **Data Management**
@@ -49,18 +50,27 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Environment Setup
+## Configuration
 
-1. Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
+### Local Development
+
+1. Create `.streamlit/secrets.toml`:
+```toml
+MONGODB_URI = "your_mongodb_connection_string"
+OPENAI_API_KEY = "your_openai_api_key"
 ```
 
-2. Fill in your environment variables in `.env`:
-```env
-MONGODB_URI=your_mongodb_connection_string
-OPENAI_API_KEY=your_openai_api_key
-```
+### Streamlit Cloud Deployment
+
+1. Push your code to GitHub
+2. Connect your repository to Streamlit Cloud (share.streamlit.io)
+3. Add your secrets in the Streamlit Cloud dashboard:
+   - Go to App Settings > Secrets
+   - Add the following variables:
+     ```toml
+     MONGODB_URI = "your_mongodb_connection_string"
+     OPENAI_API_KEY = "your_openai_api_key"
+     ```
 
 ## Database Setup
 
@@ -83,16 +93,14 @@ docker build -t reproai .
 docker run -p 8501:8501 reproai
 ```
 
-### Streamlit Cloud Deployment
+## Usage
 
-1. Push your code to GitHub
-2. Connect your repository to Streamlit Cloud
-3. Add your environment variables in Streamlit Cloud:
-   ```toml
-   [secrets]
-   MONGODB_URI = "your_mongodb_connection_string"
-   OPENAI_API_KEY = "your_openai_api_key"
-   ```
+1. Start the app and navigate to the web interface
+2. Upload a manuscript PDF or select a previously analyzed one
+3. View the analysis results in three main sections:
+   - **Results**: High-level overview with compliance score
+   - **Review**: Detailed analysis with feedback options
+   - **Checklist**: View and manage checklist items
 
 ## Project Structure
 
