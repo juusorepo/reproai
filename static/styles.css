@@ -1,0 +1,269 @@
+/* Modern UI Styles for ReproAI */
+
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Base Styles */
+.stApp {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Typography */
+.custom-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1E3A8A;
+    margin-bottom: 1rem;
+}
+
+.custom-subtitle {
+    font-size: 18px;
+    color: #64748B;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 1rem;
+}
+
+/* Sidebar Styles */
+section[data-testid="stSidebar"] {
+    font-size: 15px;
+}
+
+/* Card Styles */
+.css-1r6slb0 .stMarkdown {  /* Target markdown elements inside cards */
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1rem;
+}
+
+/* Dark mode card styles */
+[data-theme="dark"] .css-1r6slb0 .stMarkdown {
+    background: #1E293B;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles */
+.stButton > button {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button */
+.primary-button button {
+    background-color: #1E3A8A;
+    color: white;
+}
+
+/* Secondary Button */
+.secondary-button button {
+    background-color: #22C55E;
+    color: white;
+}
+
+/* Accent Button */
+.accent-button button {
+    background-color: #F59E0B;
+    color: white;
+}
+
+/* File Uploader */
+.uploadedFile {
+    border: 2px dashed #E2E8F0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Status Indicators */
+.status-success {
+    color: #22C55E;
+    font-weight: 500;
+}
+
+.status-warning {
+    color: #F59E0B;
+    font-weight: 500;
+}
+
+.status-error {
+    color: #EF4444;
+    font-weight: 500;
+}
+
+/* AI Insight Cards */
+.ai-insight {
+    border-left: 4px solid #22C55E;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    background-color: #F0FDF4;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 1rem;
+}
+
+.stTabs [data-baseweb="tab"] {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #F1F5F9;
+    border-radius: 0.5rem;
+}
+
+/* Table Styles */
+.stTable {
+    font-size: 14px;
+}
+
+.stTable th {
+    font-weight: 600;
+    color: #1E293B;
+}
+
+/* Code Blocks */
+.stCodeBlock {
+    font-size: 14px;
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* Lists */
+.stMarkdown ul, .stMarkdown ol {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Expander */
+.streamlit-expanderHeader {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] {
+    background-color: #0F172A;
+    color: #E2E8F0;
+}
+
+[data-theme="dark"] .custom-title {
+    color: #60A5FA;
+}
+
+[data-theme="dark"] .custom-subtitle {
+    color: #94A3B8;
+}
+
+/* Button color maintenance */
+[data-testid="baseButton-secondary"] {
+    background-color: transparent !important;
+    border: none !important;
+    color: #64748b !important;
+    transition: all 0.2s !important;
+}
+
+[data-testid="baseButton-secondary"]:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+/* Keep button colors after click */
+[data-testid="baseButton-secondary"]:active,
+[data-testid="baseButton-secondary"]:focus {
+    background-color: transparent !important;
+    color: #64748b !important;
+    box-shadow: none !important;
+}
+
+/* Checklist table styles */
+.checklist-table {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.checklist-header {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+}
+
+.checklist-row {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.checklist-row:last-child {
+    border-bottom: none;
+}
+
+.checklist-cell {
+    overflow-wrap: break-word;
+    min-width: 0;
+}
+
+/* Progress Indicators */
+.stProgress > div > div > div {
+    background-color: #1E3A8A;
+}
+
+/* Button Row */
+.button-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.button-row button {
+    flex: 1;
+}
+
+/* Reproducibility Score */
+.score-container {
+    background: linear-gradient(135deg, #1E3A8A, #0D9488);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+}

@@ -1,11 +1,11 @@
 """
-ReproAI - Manuscript Reproducibility Analysis Tool
-------------------------------------------------
+ReproAI - Results View
+---------------------
 
-This is the main Streamlit application file that provides the web interface for:
-1. Uploading and processing scientific manuscripts
-2. Viewing compliance analysis results
-3. Providing feedback on the analysis
+This page provides a comprehensive view of manuscript analysis results including:
+1. Manuscript selection and management
+2. Results summary and compliance analysis
+3. Detailed review and feedback options
 
 Author: ReproAI Team
 """
@@ -29,6 +29,9 @@ from app.services.summarize_service import SummarizeService
 from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.feedback import Feedback
+from app.pages.compliance_analysis import compliance_analysis_page
+from app.pages.summary_view import summary_view_page
+from app.pages.checklist_view import checklist_view_page
 import json
 from datetime import datetime
 import tempfile
@@ -79,6 +82,33 @@ def get_error_details(e: Exception) -> str:
         if hasattr(e.response, 'text'):
             error_msg += f"\nResponse: {e.response.text}"
     return f"{error_type}: {error_msg}"
+
+def display_manuscript_selector():
+    """Display a list of analyzed manuscripts and allow selection."""
+    manuscripts = db_service.get_all_manuscripts()
+    
+    if not manuscripts:
+        st.info("No manuscripts analyzed yet. Upload a manuscript to get started!")
+        return None
+    
+    # Format options for selectbox
+    manuscript_options = []
+    for m in manuscripts:
+        title = m.title if hasattr(m, 'title') else 'Untitled'
+        doi = m.doi if hasattr(m, 'doi') else 'No DOI'
+        manuscript_options.append(f"{title} ({doi})")
+    
+    # Display selector
+    selected_idx = st.selectbox(
+        "Select a manuscript to view results:",
+        range(len(manuscript_options)),
+        format_func=lambda x: manuscript_options[x]
+    )
+    
+    if selected_idx is not None:
+        st.session_state.current_manuscript = manuscripts[selected_idx]
+        return manuscripts[selected_idx]
+    return None
 
 def process_uploaded_file(uploaded_file):
     """Process uploaded PDF file."""
@@ -133,12 +163,6 @@ def process_uploaded_file(uploaded_file):
         st.success("✅ Manuscript processed successfully!")
         st.session_state.current_manuscript = manuscript.to_dict()
         
-        # Add view results button
-        col1, col2, col3 = st.columns([1,2,1])
-        with col2:
-            if st.button("📊 View Results", use_container_width=True, type="primary"):
-                st.switch_page("pages/results.py")
-        
     except Exception as e:
         error_details = get_error_details(e)
         st.error(f"Error processing manuscript: {error_details}")
@@ -154,56 +178,55 @@ def process_uploaded_file(uploaded_file):
 
 def main():
     """Main app function."""
-    # Sidebar
-    st.sidebar.title("Navigation")
-    st.sidebar.write("Use the navigation below to move between different sections of the analysis.")
-    
-    # Main content
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h1 class="custom-title">ReproAI Analyzer</h1>
-            <p class="custom-subtitle">Enhancing Scientific Reproducibility with AI</p>
+            <h1 class="custom-title">Analysis Results</h1>
+            <p class="custom-subtitle">View and Review Manuscript Analysis</p>
         </div>
     """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns([2, 1])
+    # Create tabs
+    tab1, tab2, tab3 = st.tabs([
+        "Manuscript",
+        "Results",
+        "Review"
+    ])
     
-    with col1:
-        st.markdown('<h2 class="section-title">Upload New Manuscript</h2>', unsafe_allow_html=True)
-        st.markdown("""
-            Welcome to ReproAI Analyzer! This tool helps you:
-            - Analyze scientific manuscripts for reproducibility
-            - Get detailed compliance reports
-            - Track improvements over time
-            
-            Get started by uploading a manuscript in PDF format.
-        """)
+    with tab1:
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.markdown('<h2 class="section-title">Previous Manuscripts</h2>', unsafe_allow_html=True)
+            selected_manuscript = display_manuscript_selector()
         
-        uploaded_file = st.file_uploader(
-            "Choose a PDF file",
-            type=['pdf'],
-            help="Upload a scientific manuscript in PDF format",
-            key="manuscript_uploader"
-        )
-        
-        if uploaded_file:
-            st.markdown(f"""
-                <div class="uploadedFile">
-                    <span class="status-success">✓</span> Selected file: {uploaded_file.name}
+        with col2:
+            st.markdown('<h3 class="section-subtitle">Upload New</h3>', unsafe_allow_html=True)
+            st.markdown('<div class="secondary-button">', unsafe_allow_html=True)
+            if st.button("Upload Manuscript", use_container_width=True):
+                st.switch_page("streamlit_app.py")
+            st.markdown('</div>', unsafe_allow_html=True)
+    
+    with tab2:
+        if st.session_state.current_manuscript:
+            st.markdown('<h2 class="section-title">Analysis Results</h2>', unsafe_allow_html=True)
+            summary_view_page()
+        else:
+            st.markdown("""
+                <div class="ai-insight">
+                    Select a manuscript to view results
                 </div>
             """, unsafe_allow_html=True)
-            
-            st.markdown('<div class="primary-button">', unsafe_allow_html=True)
-            if st.button("Process Manuscript", use_container_width=True):
-                process_uploaded_file(uploaded_file)
-            st.markdown('</div>', unsafe_allow_html=True)
     
-    with col2:
-        if st.session_state.log_messages:
-            st.markdown('<h3 class="section-subtitle">Processing Log</h3>', unsafe_allow_html=True)
-            st.markdown('<div class="css-1r6slb0">', unsafe_allow_html=True)
-            display_logs()
-            st.markdown('</div>', unsafe_allow_html=True)
+    with tab3:
+        if st.session_state.current_manuscript:
+            st.markdown('<h2 class="section-title">Detailed Review</h2>', unsafe_allow_html=True)
+            compliance_analysis_page()
+            checklist_view_page(db_service)
+        else:
+            st.markdown("""
+                <div class="ai-insight">
+                    Select a manuscript to view detailed analysis
+                </div>
+            """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
