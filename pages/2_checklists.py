@@ -54,7 +54,7 @@ def display_checklist_items(db_service: DatabaseService):
     
     st.markdown("""
         <div class="ai-insight">
-            Text from original source is shown in italics. That is split to items for AI-assistes stepwise analysis.
+            Text from original source is shown in italics. The text is split to items for stepwise analysis.
         </div>
     """, unsafe_allow_html=True)
     
@@ -299,8 +299,8 @@ def main():
     load_css()
     
     # Sidebar Navigation
-    st.sidebar.title("Navigation")
-    st.sidebar.write("Use the navigation below to move between different sections of the analysis.")
+    st.sidebar.title("Instructions")
+    st.sidebar.write("Later on, user may choose which checklist to use for the analysis.")
     
     # Main content
     st.markdown("""
