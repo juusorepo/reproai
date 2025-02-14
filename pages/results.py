@@ -87,7 +87,7 @@ def get_error_details(e: Exception) -> str:
 
 def display_manuscript_selector():
     """Display a list of analyzed manuscripts and allow selection."""
-    st.markdown('<h2 class="section-title">Analyzed Manuscripts</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title"> Select manuscript </h2>', unsafe_allow_html=True)
     
     # Get list of analyzed manuscripts
     manuscripts = db_service.get_all_manuscripts()
@@ -95,40 +95,73 @@ def display_manuscript_selector():
     if not manuscripts:
         st.info("No analyzed manuscripts found. Please upload a manuscript first.")
         return None
+
+    # Sort manuscripts by analysis date
+    manuscripts = sorted(manuscripts, key=lambda m: m.analysis_date if hasattr(m, 'analysis_date') else datetime.min, reverse=True)
     
-    # Get unique designs for filter
-    designs = sorted(set(m.design for m in manuscripts if hasattr(m, 'design') and m.design))
-    selected_design = st.selectbox(
-        "Filter by study design:",
-        ["All"] + designs,
-        index=0
+    # Auto-select latest manuscript if none selected
+    if st.session_state.current_manuscript is None:
+        st.session_state.current_manuscript = manuscripts[0]
+    
+    # Display current selection at the top
+    if st.session_state.current_manuscript:
+        st.success(f"Current manuscript: {st.session_state.current_manuscript.title}")
+       
+    
+    # Initialize index based on current selection
+    current_index = 0
+    if st.session_state.current_manuscript:
+        try:
+            current_index = manuscripts.index(st.session_state.current_manuscript)
+        except ValueError:
+            current_index = 0
+    
+    st.write("---")
+    st.markdown(f'<h2 class="section-title"> Analysed manuscripts ({len(manuscripts)}) </h2>', unsafe_allow_html=True)
+    
+    # Filtering options in an expander
+    with st.expander("🔍 Filter manuscripts", expanded=False):
+        # Get unique designs for filter
+        designs = sorted(set(m.design for m in manuscripts if hasattr(m, 'design') and m.design))
+        selected_design = st.selectbox(
+            "Study design:",
+            ["All"] + designs,
+            index=0
+        )
+        
+        # Filter manuscripts by design
+        if selected_design != "All":
+            manuscripts = [m for m in manuscripts if hasattr(m, 'design') and m.design == selected_design]
+        
+        # Search by title or DOI
+        search_term = st.text_input("🔎 Search by title or DOI:", "")
+        if search_term:
+            search_term = search_term.lower()
+            manuscripts = [m for m in manuscripts if 
+                         search_term in m.title.lower() or 
+                         (hasattr(m, 'doi') and search_term in m.doi.lower())]
+    
+    # Create a selection box with a clear format
+    manuscript_options = [f"{m.title} ({m.doi})" for m in manuscripts]
+    
+    def on_select():
+        if "manuscript_selector" in st.session_state:
+            idx = st.session_state.manuscript_selector
+            st.session_state.current_manuscript = manuscripts[idx]
+    
+    selected_index = st.selectbox(
+        "Select to view results:",
+        range(len(manuscripts)),
+        index=current_index,
+        format_func=lambda i: manuscript_options[i],
+        key="manuscript_selector",
+        on_change=on_select,
+        help="Choose a manuscript to view its analysis results"
     )
     
-    # Filter manuscripts by design
-    filtered_manuscripts = manuscripts
-    if selected_design != "All":
-        filtered_manuscripts = [m for m in manuscripts if hasattr(m, 'design') and m.design == selected_design]
-    
-    # Display stats
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Total Manuscripts", len(filtered_manuscripts))
-    with col2:
-        dates = [m.analysis_date for m in filtered_manuscripts if hasattr(m, 'analysis_date')]
-        latest = max(dates).strftime("%Y-%m-%d") if dates else "N/A"
-        st.metric("Latest Analysis", latest)
-    
-    # Create a selection box
-    selected = st.selectbox(
-        "Choose a manuscript to view results:",
-        filtered_manuscripts,
-        format_func=lambda x: f"{x.title} ({x.doi})"
-    )
-    
-    if selected:
-        st.session_state.current_manuscript = selected
-        st.info("✨ View the analysis from the 'Results' tab above.")
-        return selected
+    if st.session_state.current_manuscript:
+        
+        return st.session_state.current_manuscript
     
     return None
 
