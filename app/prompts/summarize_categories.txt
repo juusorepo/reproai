@@ -1,17 +1,21 @@
 You are analyzing compliance results for a scientific manuscript and creating a category-based summary.
 
-MANUSCRIPT INFORMATION:
-{manuscript}
+MANUSCRIPT DOI:
+{manuscript_doi}
+
+CATEGORIES TO ANALYZE: {categories}
 
 COMPLIANCE RESULTS:
 {results}
 
-CATEGORIES TO ANALYZE:
-{categories}
-
 TASK:
-Create a JSON summary for each category. The JSON must follow this exact structure, with the specified categories:
+Create a structured summary of compliance for this category. Focus on:
+1. Overall compliance level for this category
+2. Key strengths and gaps
+3. Specific recommendations for improvement
 
+OUTPUT FORMAT:
+Return a JSON object with the following structure:
 {{
     "categories": {{
         "category_name": {{
@@ -21,9 +25,12 @@ Create a JSON summary for each category. The JSON must follow this exact structu
     }}
 }}
 
+
 REQUIREMENTS:
 1. Include ALL listed categories in the response
 2. For categories with no issues, set summary to "No issues." and severity to "low"
 3. Keep each summary concise (max 50 words)
 4. Assign severity based on impact on reproducibility
 5. Return ONLY valid JSON without any other text
+6. Write in clear, concise, professional language
+7. Focus on actionable insights

@@ -42,7 +42,7 @@ def format_compliance_status(status: str):
 
 def display_checklist_items(db_service: DatabaseService):
     """Display the checklist view."""
-    st.markdown('<h2 class="section-title">Checklist</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Current checklist</h2>', unsafe_allow_html=True)
     
     st.markdown("""
         <div class="css-1r6slb0">
@@ -54,7 +54,7 @@ def display_checklist_items(db_service: DatabaseService):
     
     st.markdown("""
         <div class="ai-insight">
-            Original guidance is shown in italics. That is split to items for AI-assisted analysis.
+            Text from original source is shown in italics. That is split to items for AI-assistes stepwise analysis.
         </div>
     """, unsafe_allow_html=True)
     
@@ -306,8 +306,7 @@ def main():
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <h1 class="custom-title">Checklists</h1>
-            <p class="custom-subtitle">Manage Reproducibility Checklists</p>
-        </div>
+            </div>
     """, unsafe_allow_html=True)
     
     # Initialize database service
@@ -315,7 +314,7 @@ def main():
     
     # Create tabs
     tab1, tab2 = st.tabs([
-        "View Checklists",
+        "View Checklist",
         "Manage Items"
     ])
     

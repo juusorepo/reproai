@@ -1,0 +1,255 @@
+{
+  "doi": "10.1177/1063426617742346",
+  "overview": "### Overview:\n- The manuscript exhibits low compliance with standard reporting guidelines, lacking in several areas critical for reproducibility and transparency.\n- **Strengths:** It provides a rationale for the study sample chosen, leveraging theories to underscore the significance of its focus on social-emotional learning (SEL) and group dynamics.\n- **Gaps:** The most critical gaps include the absence of details on data collection procedures, participant demographics, and the statistical rationale for sample size, undermining the study's reproducibility and the clarity of its research context.\n\n### Key Recommendations:\n1. **Detail the data collection procedure:** Including instruments used, to enhance the reproducibility of the research.\n   - *Importance:* Clarity on data collection methods is fundamental for other researchers to replicate or build upon the work.\n   \n2. **Provide participant demographics and representativeness:** To contextualize the findings and assess their applicability to broader populations.\n   - *Importance:* Understanding who the research pertains to is crucial for evaluating the relevance and impact of the findings.\n\n3. **Explain the rationale for sample size and statistical methods:** To justify the study's design and ensure the reliability of its conclusions.\n   - *Importance:* Transparent reporting of sample size determination supports the validity of the research outcomes.",
+  "categories": [
+    {
+      "category": "Data collection",
+      "summary": "Manuscript lacks details on data collection procedures, presence during collection, and researcher's blinding. Critical for reproducibility.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide specific details about the data collection procedure, including the instruments or devices used to record the data.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:16:29.781000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether anyone other than the participants and the researcher was present during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:16:38.622000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "1.3",
+          "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:16:44.730000"
+        }
+      ]
+    },
+    {
+      "category": "Non-participation",
+      "summary": "Lacks dropout reasons and response rate, essential for assessing sample representativeness.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "5.2",
+          "question": "Does the paper provide reasons for dropout or non-participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide reasons for dropout or non-participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:23.894000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on the response rate or explicitly state that no participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:29.683000"
+        }
+      ]
+    },
+    {
+      "category": "Sampling strategy",
+      "summary": "No description of sampling procedure or rationale for sample size, undermining sampling validity.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "6.1",
+          "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the sampling procedure used for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:35.278000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:40.795000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "No",
+          "explanation": "The manuscript does not mention any sample-size calculation nor provides an explanation for how sample sizes were chosen. There is no rationale provided for why these sample sizes are sufficient.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:46.805000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "No",
+          "explanation": "The manuscript does not mention data saturation or describe criteria used to decide that no further sampling was needed for qualitative data.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:52.927000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusion criteria and details on any data exclusions are missing, compromising data integrity.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether any data were excluded from the analyses.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:58.661000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "7.2",
+          "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on whether data were excluded, the exact number of exclusions, or the rationale behind any exclusions.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:18:04.292000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate whether exclusion criteria were pre-established for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:18:09.746000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "No start and stop dates of data collection provided, affecting study timeline clarity.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate the start and stop dates of data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:08.280000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss sample collection or cohorts, thus the question of gaps between collection periods and stating dates for each sample cohort is not applicable.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:14.206000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "Missing explicit research sample and demographic information, though provides rationale for study focus. Needs more sample clarity.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "No",
+          "explanation": "The manuscript does not explicitly state the research sample used for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:18:14.634000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "8.2",
+          "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide relevant demographic information such as age and sex of the participants, nor does it indicate whether the sample is representative.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:18:20.551000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The paper provides a rationale for focusing on group processes and social dynamics in schools to address emotional and behavioral problems, drawing on ecological systems theory and group socialization theory.",
+          "quote": "Drawing on Bronfenbrenner's ecological systems theory and Harris's group socialization theory, this article reviews the literature on SEL and group dynamics to identify the ways in which existing SEL frameworks already encapsulate social group processes that contribute to the promotion of positive social-emotional development of children and youth.",
+          "section": "Abstract",
+          "created_at": "2025-02-13 21:18:29.194000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "8.4",
+          "question": "For studies using existing datasets, does the paper describe the dataset and its source?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the use of an existing dataset nor its source.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:18:36.458000"
+        }
+      ]
+    },
+    {
+      "category": "Randomization",
+      "summary": "Not applicable, as the manuscript is a literature review without participant allocation.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss the allocation of participants into groups, as it focuses on reviewing literature on SEL and group dynamics rather than reporting on a study involving participant allocation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:16:56.114000"
+        },
+        {
+          "doi": "10.1177/1063426617742346",
+          "item_id": "2.3",
+          "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss a study involving allocation of participants, as it is a review article focusing on literature regarding SEL and group dynamics.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 21:17:02.758000"
+        }
+      ]
+    }
+  ]
+}

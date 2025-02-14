@@ -28,10 +28,12 @@ class Manuscript:
         authors (List[str]): List of author names
         abstract (str): Abstract of the manuscript
         design (str): Study design type
+        email (str): Email of the corresponding/first author
         status (str): Status of the manuscript analysis
         analysis_date (datetime): When the manuscript was last analyzed
         pdf_path (str): Path to the manuscript PDF
         processed_at (datetime): When the manuscript was processed
+        text (str): Full text content of the manuscript
     """
     
     def __init__(
@@ -41,50 +43,54 @@ class Manuscript:
         authors: List[str] = None,
         abstract: str = "",
         design: str = "",
+        email: str = "",
         status: str = "processed",
         analysis_date: Optional[datetime] = None,
         pdf_path: str = "",
-        processed_at: Optional[datetime] = None
+        processed_at: Optional[datetime] = None,
+        text: str = ""
     ):
         """Initialize a new Manuscript instance.
         
         Args:
             doi: Digital Object Identifier
-            title: The manuscript title
+            title: Title of the manuscript
             authors: List of author names
             abstract: Abstract of the manuscript
             design: Study design type
-            status: Status of the manuscript analysis
+            email: Email of the corresponding/first author
+            status: Analysis status
             analysis_date: When the manuscript was analyzed
-            pdf_path: Path to the manuscript PDF
+            pdf_path: Path to the PDF file
             processed_at: When the manuscript was processed
+            text: Full text content
         """
         self.doi = doi
         self.title = title
         self.authors = authors or []
         self.abstract = abstract
         self.design = design
+        self.email = email
         self.status = status
-        self.analysis_date = analysis_date or datetime.utcnow()
+        self.analysis_date = analysis_date or datetime.now()
         self.pdf_path = pdf_path
-        self.processed_at = processed_at
-    
+        self.processed_at = processed_at or datetime.now()
+        self.text = text
+
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the manuscript to a dictionary for MongoDB storage.
-        
-        Returns:
-            Dict containing all manuscript data in a format suitable for MongoDB
-        """
+        """Convert the manuscript to a dictionary for database storage."""
         return {
             "doi": self.doi,
             "title": self.title,
             "authors": self.authors,
             "abstract": self.abstract,
             "design": self.design,
+            "email": self.email,
             "status": self.status,
             "analysis_date": self.analysis_date,
             "pdf_path": self.pdf_path,
-            "processed_at": self.processed_at
+            "processed_at": self.processed_at,
+            "text": self.text
         }
     
     @classmethod
@@ -105,8 +111,10 @@ class Manuscript:
             authors=data.get("authors", []),
             abstract=data.get("abstract", ""),
             design=data.get("design", ""),
+            email=data.get("email", ""),
             status=data.get("status", "processed"),
             analysis_date=data.get("analysis_date"),
             pdf_path=data.get("pdf_path", ""),
-            processed_at=data.get("processed_at")
+            processed_at=data.get("processed_at"),
+            text=data.get("text", "")
         )

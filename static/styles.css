@@ -32,9 +32,25 @@
 
 .section-subtitle {
     font-size: 18px;
-    font-weight: 500;
     color: #475569;
-    margin-bottom: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    color: #64748B;
+}
+
+.text-success {
+    color: #22C55E;
+}
+
+.text-warning {
+    color: #F59E0B;
+}
+
+.text-error {
+    color: #EF4444;
 }
 
 /* Sidebar Styles */
@@ -59,27 +75,35 @@ section[data-testid="stSidebar"] {
 
 /* Button Styles */
 .stButton > button {
-    border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .stButton > button:hover {
     transform: translateY(-1px);
+    border-color: #1E3A8A !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 /* Primary Button */
-.primary-button button {
-    background-color: #1E3A8A;
-    color: white;
+.primary-button .stButton > button {
+    background-color: #1E3A8A !important;
+    color: white !important;
+    border: none !important;
+}
+
+.primary-button .stButton > button:hover {
+    background-color: #1E40AF !important;
 }
 
 /* Secondary Button */
-.secondary-button button {
-    background-color: #22C55E;
-    color: white;
+.secondary-button .stButton > button {
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
+    border: 1px solid #E2E8F0 !important;
 }
 
 /* Accent Button */
@@ -90,7 +114,7 @@ section[data-testid="stSidebar"] {
 
 /* File Uploader */
 .uploadedFile {
-    border: 2px dashed #E2E8F0;
+    background-color: #F8FAFC;
     border-radius: 0.75rem;
     padding: 1rem;
     margin: 1rem 0;
@@ -128,13 +152,12 @@ section[data-testid="stSidebar"] {
 }
 
 .stTabs [data-baseweb="tab"] {
-    padding: 0.5rem 1rem;
     font-size: 14px;
     font-weight: 500;
 }
 
 .stTabs [aria-selected="true"] {
-    background-color: #F1F5F9;
+    background-color: #F8FAFC;
     border-radius: 0.5rem;
 }
 
@@ -149,57 +172,104 @@ section[data-testid="stSidebar"] {
 }
 
 /* Code Blocks */
-.stCodeBlock {
+pre {
     font-size: 14px;
     font-family: 'Monaco', 'Menlo', monospace;
 }
 
 /* Lists */
-.stMarkdown ul, .stMarkdown ol {
-    font-size: 14px;
-    line-height: 1.6;
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Cards */
+.card {
+    background-color: #FFFFFF;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 0.5rem;
+}
+
+.card-body {
+    color: #475569;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+/* Flex Layout */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+/* Spacing */
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-4 {
     margin-bottom: 1rem;
 }
 
-/* Expander */
-.streamlit-expanderHeader {
-    font-size: 16px;
-    font-weight: 500;
+.p-4 {
+    padding: 1rem;
 }
 
-/* Dark mode adjustments */
-[data-theme="dark"] {
-    background-color: #0F172A;
-    color: #E2E8F0;
+/* Progress Indicators */
+.stProgress > div > div > div {
+    background-color: #1E3A8A;
 }
 
-[data-theme="dark"] .custom-title {
-    color: #60A5FA;
+/* Button Row */
+.button-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
 }
 
-[data-theme="dark"] .custom-subtitle {
-    color: #94A3B8;
+/* Feedback Form */
+.feedback-form {
+    max-width: 600px;
+    margin: 2rem auto;
 }
 
-/* Button color maintenance */
-[data-testid="baseButton-secondary"] {
-    background-color: transparent !important;
-    border: none !important;
-    color: #64748b !important;
-    transition: all 0.2s !important;
+.feedback-form textarea {
+    min-height: 150px;
 }
 
-[data-testid="baseButton-secondary"]:hover {
-    background-color: #f1f5f9 !important;
-    color: #1e293b !important;
-}
-
-/* Keep button colors after click */
-[data-testid="baseButton-secondary"]:active,
-[data-testid="baseButton-secondary"]:focus {
-    background-color: transparent !important;
-    color: #64748b !important;
-    box-shadow: none !important;
+/* Stats */
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 /* Checklist table styles */
@@ -237,20 +307,39 @@ section[data-testid="stSidebar"] {
     min-width: 0;
 }
 
-/* Progress Indicators */
-.stProgress > div > div > div {
-    background-color: #1E3A8A;
+/* Dark mode adjustments */
+[data-theme="dark"] {
+    background-color: #0F172A;
+    color: #E2E8F0;
 }
 
-/* Button Row */
-.button-row {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
+[data-theme="dark"] .custom-title {
+    color: #60A5FA;
 }
 
-.button-row button {
-    flex: 1;
+[data-theme="dark"] .custom-subtitle {
+    color: #94A3B8;
+}
+
+/* Button color maintenance */
+[data-testid="baseButton-secondary"] {
+    background-color: transparent !important;
+    border: none !important;
+    color: #64748b !important;
+    transition: all 0.2s !important;
+}
+
+[data-testid="baseButton-secondary"]:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+/* Keep button colors after click */
+[data-testid="baseButton-secondary"]:active,
+[data-testid="baseButton-secondary"]:focus {
+    background-color: transparent !important;
+    color: #64748b !important;
+    box-shadow: none !important;
 }
 
 /* Reproducibility Score */
@@ -266,4 +355,34 @@ section[data-testid="stSidebar"] {
 .score-value {
     font-size: 2rem;
     font-weight: 700;
+}
+
+/* Analysis results */
+.result-card {
+    background-color: rgba(38, 39, 48, 0.8);
+    border: 1px solid rgba(250, 250, 250, 0.1);
+    border-radius: 4px;
+    padding: 1em;
+    margin: 1em 0;
+}
+
+.result-card:hover {
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+.result-title {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+/* Sidebar navigation */
+.css-1d391kg {
+    border-right-color: rgba(250, 250, 250, 0.1) !important;
 }

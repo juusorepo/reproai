@@ -60,7 +60,8 @@ def get_llm_response(
     temperature: float = 0,
     max_tokens_output: int = MAX_TOKENS_OUTPUT,
     functions: List[Dict[str, Any]] = None,
-    function_call: Dict[str, str] = None
+    function_call: Dict[str, str] = None,
+    response_format: Dict[str, str] = None
 ) -> str:
     """
     Get a response from OpenAI's API.
@@ -72,6 +73,7 @@ def get_llm_response(
         max_tokens_output: Maximum number of tokens in the response
         functions: Optional list of function definitions for function calling
         function_call: Optional dictionary specifying which function to call
+        response_format: Optional dictionary specifying the response format (e.g., {"type": "json_object"})
         
     Returns:
         The API's response text, either direct content or function call result
@@ -92,63 +94,64 @@ def get_llm_response(
         max_prompt_tokens = MAX_TOKENS_TOTAL - len(system_prompt) // CHARS_PER_TOKEN - max_tokens_output
         truncated_prompt = truncate_to_token_limit(prompt, max_prompt_tokens)
         
-        # Create chat completion arguments
+        # Prepare messages
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": truncated_prompt}
+        ]
+        
+        # Prepare API call arguments
         logger.info("Creating chat completion arguments")
         completion_args = {
-            "model": "gpt-4-turbo-preview",  # Using the latest model
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": truncated_prompt}
-            ],
+            "model": "gpt-4-turbo-preview",
+            "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens_output
         }
         
-        # Add function calling if specified
+        # Add functions if provided
         if functions:
-            logger.info("Adding function definitions")
-            try:
-                completion_args["tools"] = [{"type": "function", "function": f} for f in functions]
-            except Exception as e:
-                logger.error(f"Error adding function definitions: {type(e).__name__}: {str(e)}")
-                raise
-                
+            completion_args["tools"] = [{"type": "function", "function": f} for f in functions]
         if function_call:
-            logger.info("Adding function call specification")
-            try:
-                completion_args["tool_choice"] = {"type": "function", "function": function_call}
-            except Exception as e:
-                logger.error(f"Error adding function call: {type(e).__name__}: {str(e)}")
-                raise
+            completion_args["tool_choice"] = {"type": "function", "function": function_call}
+        if response_format:
+            completion_args["response_format"] = response_format
         
         # Make API call
         logger.info("Making API call to OpenAI")
         try:
+            # Print input for debugging
+            print("\nLLM Input:")
+            print("-" * 80)
+            for msg in messages:
+                print(f"{msg['role'].upper()}: {msg['content'][:500]}...")
+            print("-" * 80)
+
             response = client.chat.completions.create(**completion_args)
             logger.info("API call successful")
+            
+            # Process response
+            logger.info("Processing API response")
+            if functions and response.choices[0].message.tool_calls:
+                # Return function call arguments
+                content = response.choices[0].message.tool_calls[0].function.arguments
+            else:
+                logger.info("Extracting message content")
+                content = response.choices[0].message.content
+
+            # Print response for debugging
+            print("\nLLM Response:")
+            print("-" * 80)
+            print(content)
+            print("-" * 80)
+
+            return content
+            
         except Exception as e:
             logger.error(f"API call failed: {type(e).__name__}: {str(e)}")
             if hasattr(e, 'response'):
                 logger.error(f"API response: {e.response}")
             raise Exception(f"OpenAI API call failed: {str(e)}")
-        
-        # Handle function calling response
-        logger.info("Processing API response")
-        try:
-            message = response.choices[0].message
-            if hasattr(message, 'tool_calls') and message.tool_calls:
-                # Return the function arguments as a JSON string
-                logger.info("Extracting function call arguments")
-                return message.tool_calls[0].function.arguments
-            
-            logger.info("Extracting message content")
-            return message.content
-            
-        except Exception as e:
-            logger.error(f"Error processing API response: {type(e).__name__}: {str(e)}")
-            if hasattr(e, 'response'):
-                logger.error(f"Response content: {e.response}")
-            raise Exception(f"Error processing API response: {str(e)}")
         
     except Exception as e:
         logger.error(f"LLM service error: {type(e).__name__}: {str(e)}")

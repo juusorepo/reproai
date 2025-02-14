@@ -97,7 +97,7 @@ class DatabaseService:
             {"$set": result},
             upsert=True
         )
-    
+
     def save_compliance_results(self, results: List[Dict[str, Any]], doi: str) -> None:
         """
         Save compliance results to the database.
@@ -251,17 +251,17 @@ class DatabaseService:
             print(f"Error getting all feedback: {str(e)}")
             return []
 
-    def save_summary(self, doi: str, overview: str, category_summaries: List[Dict[str, Any]]):
+    def save_summary(self, doi: str, overview: str, category_summaries: List[Dict[str, Any]]) -> None:
         """Save a compliance summary to database.
         
         Args:
             doi: DOI of the manuscript
             overview: Overview section of the summary
-            category_summaries: List of category summaries, each containing:
+            category_summaries: List of dictionaries containing:
                 - category: Category name
-                - summary: Summary text or "ok."
-                - severity: high/medium/low
-                - original_results: List of original compliance results for this category
+                - summary: Category-specific summary
+                - severity: Severity level (low, medium, high)
+                - original_results: List of original compliance results
         """
         summary_doc = {
             "doi": doi,
@@ -285,8 +285,16 @@ class DatabaseService:
         Returns:
             Dictionary containing:
                 - overview: Overview section
-                - category_summaries: List of category summaries
+                - category_summaries: List of dictionaries containing:
+                    - category: Category name
+                    - summary: Category-specific summary
+                    - severity: Severity level (low, medium, high)
+                    - original_results: List of original compliance results
                 - created_at: Timestamp
             Returns None if not found
         """
-        return self.compliance_summaries.find_one({"doi": doi})
+        try:
+            return self.compliance_summaries.find_one({"doi": doi})
+        except Exception as e:
+            print(f"Error getting summary: {str(e)}")
+            return None

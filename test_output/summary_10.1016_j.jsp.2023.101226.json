@@ -1,0 +1,245 @@
+{
+  "doi": "10.1016/j.jsp.2023.101226",
+  "overview": "### Overview:\n- The manuscript exhibits a high level of compliance with reporting guidelines, particularly in detailing data collection procedures, participant allocation, and sample characteristics.\n- **Strengths:** It excels in providing detailed information on data collection, participant allocation, and the rationale behind sample selection, which are crucial for reproducibility and understanding the study's context.\n- **Gaps:** The most critical gaps include the lack of details on the presence of others during data collection, blinding of researchers, and specifics on participant dropout or non-participation.\n\n### Key Recommendations:\n1. **Detail the presence of others during data collection.**\n   - *Importance:* Enhances transparency and understanding of the data collection environment.\n   \n2. **Clarify researcher blinding to conditions and hypotheses.**\n   - *Importance:* Critical for assessing potential biases in data collection and analysis.\n   \n3. **Provide specifics on participant dropout or non-participation.**\n   - *Importance:* Essential for evaluating the study's external validity and the representativeness of the findings.",
+  "categories": [
+    {
+      "category": "Non-participation",
+      "summary": "Manuscript does not specify dropout rates or reasons for non-participation, impacting study validity.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "5.1",
+          "question": "Does the paper specify how many participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify how many participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:56:47.174000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "5.2",
+          "question": "Does the paper provide reasons for dropout or non-participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide reasons for dropout or non-participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:56:52.133000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on the response rate or explicitly state that no participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:56:57.305000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "Details on data collection instruments provided, but lacks information on the presence of others during collection and researcher blinding.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The paper provides detailed information about the data collection procedure, including the instruments used to record the data, such as online questionnaires and peer nominations for various behaviors.",
+          "quote": "Data were collected through online questionnaires that were completed during regular school hours in the school computer lab under the supervision of teachers. The questionnaires were either in Finnish or in Swedish, depending on the language of the school. Defending was assessed with three items from the Participant Role Questionnaire (Salmivalli & Voeten, 2004): (a) \"He/She comforts the victim or encourages him/her to tell the teacher about the bullying\"; (b) \"He/She tells the others to stop bullying\"; and (c) \"He/She tries to make the others stop bullying\".",
+          "section": "3. Method",
+          "created_at": "2025-02-12 14:55:54.936000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether anyone other than the participant(s) and the researcher was present during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:56:00.531000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "1.3",
+          "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:56:06.037000"
+        }
+      ]
+    },
+    {
+      "category": "Sampling strategy",
+      "summary": "No pre-determined sample size described, but rationale for sample choice and data saturation addressed.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:57:07.836000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "Yes",
+          "explanation": "The paper explains how sample sizes were chosen based on the initial sample and the criteria for selecting classrooms with a minimum participation rate, providing a rationale for why these sample sizes are sufficient.",
+          "quote": "Among classrooms already participating at the first wave (T1; pretest data), our initial sample included 7357 children participating in at least one of the three waves (including 5255 participating in all three waves). The percentage of parents providing consent for their children to participate was 91%. As the main variable of interest (i.e., defending behavior) was assessed via within-classroom peer nominations, we ensured good reliability of the variable by selecting classrooms with at least 10 students and a minimum 40% participation rate at each wave, resulting in a sample of 5731 participants (Mage = 11 years, SD = 1.10; 51% girls) from 172 intervention and 125 control classrooms.",
+          "section": "3.1. Participants",
+          "created_at": "2025-02-12 14:57:19.289000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "Yes",
+          "explanation": "The paper indicates that data saturation was considered through the longitudinal design and large sample size, ensuring a comprehensive exploration of the mechanisms of change in defending behavior.",
+          "quote": "This study used three waves of data collected in 77 Finnish primary schools (39 intervention schools, 38 control schools) for the RCT evaluation of the KiVa anti-bullying program.",
+          "section": "Method",
+          "created_at": "2025-02-12 14:57:26.993000"
+        }
+      ]
+    },
+    {
+      "category": "Randomization",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "2.1",
+          "question": "Does the paper specify whether participants were allocated into experimental groups?",
+          "compliance": "Yes",
+          "explanation": "The paper specifies that participants were allocated into experimental groups as part of a randomized controlled trial.",
+          "quote": "Data for this randomized controlled trial (RCT) of the KiVa anti-bullying program were collected in Finnish primary schools at baseline, after 5 months of implementation, and after 9 months of implementation",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:56:13.048000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "Yes",
+          "explanation": "The paper explicitly states that participants were allocated into groups through random allocation as part of a randomized controlled trial.",
+          "quote": "Data for this randomized controlled trial (RCT) of the KiVa anti-bullying program were collected in Finnish primary schools at baseline, after 5 months of implementation, and after 9 months of implementation",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:56:20.968000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "Yes",
+          "explanation": "The manuscript indicates the start and stop dates of data collection, specifying that data were collected at baseline, after 5 months of implementation, and after 9 months of implementation.",
+          "quote": "Data for this randomized controlled trial (RCT) of the KiVa anti-bullying program were collected in Finnish primary schools at baseline, after 5 months of implementation, and after 9 months of implementation",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:56:35.019000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "Yes",
+          "explanation": "The manuscript clearly states the dates for each sample cohort as part of the collection periods for the randomized controlled trial of the KiVa anti-bullying program.",
+          "quote": "Data for this randomized controlled trial (RCT) of the KiVa anti-bullying program were collected in Finnish primary schools at baseline, after 5 months of implementation, and after 9 months of implementation",
+          "section": "Method",
+          "created_at": "2025-02-12 14:56:42.205000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusions and rationale clearly stated, with pre-established criteria.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "Yes",
+          "explanation": "The paper explicitly states that data were collected and analyzed for a sample of 5731 children, with no mention of data exclusion.",
+          "quote": "Analyses conducted on a sample of 5731 children (baseline Mage = 11 years; 51% girls) revealed that the positive effects of KiVa on defending behavior after 9 months of implementation could partly be explained by the positive effects of the program on two factors (i.e., feelings of responsibility to intervene and expectations that the defending would make the bullying decrease or stop) after 5 months of implementation.",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:57:35.067000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "7.2",
+          "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+          "compliance": "Yes",
+          "explanation": "The paper provides the exact number of exclusions and the rationale behind them, ensuring compliance with the reporting guidelines.",
+          "quote": "Among classrooms already participating at the first wave (T1; pretest data), our initial sample included 7357 children participating in at least one of the three waves (including 5255 participating in all three waves). The percentage of parents providing consent for their children to participate was 91%. As the main variable of interest (i.e., defending behavior) was assessed via within-classroom peer nominations, we ensured good reliability of the variable by selecting classrooms with at least 10 students and a minimum 40% participation rate at each wave, resulting in a sample of 5731 participants (Mage = 11 years, SD = 1.10; 51% girls) from 172 intervention and 125 control classrooms.",
+          "section": "3.1. Participants",
+          "created_at": "2025-02-12 14:57:46.790000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "Yes",
+          "explanation": "The paper indicates that exclusion criteria were pre-established as part of the study design.",
+          "quote": "we ensured good reliability of the variable by selecting classrooms with at least 10 students and a minimum 40% participation rate at each wave, resulting in a sample of 5731 participants",
+          "section": "3.1. Participants",
+          "created_at": "2025-02-12 14:57:53.735000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "Yes",
+          "explanation": "The paper clearly states the research sample as Finnish primary school children.",
+          "quote": "Analyses conducted on a sample of 5731 children (baseline Mage = 11 years; 51% girls) revealed that the positive effects of KiVa on defending behavior after 9 months of implementation could partly be explained by the positive effects of the program on two factors (i.e., feelings of responsibility to intervene and expectations that the defending would make the bullying decrease or stop) after 5 months of implementation.",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:58:01.633000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "8.2",
+          "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+          "compliance": "Yes",
+          "explanation": "The paper provides relevant demographic information including age, sex, and sample representativeness.",
+          "quote": "Analyses conducted on a sample of 5731 children (baseline Mage = 11 years; 51% girls)",
+          "section": "A B S T R A C T",
+          "created_at": "2025-02-12 14:58:07.952000"
+        },
+        {
+          "doi": "10.1016/j.jsp.2023.101226",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The paper provides a rationale for the study sample chosen, explaining the significance of defending behavior in discouraging bullying and the unknown mechanisms underlying the effectiveness of interventions in increasing defending.",
+          "quote": "Given that defending victimized peers might help discourage bullying behavior and prevent its harmful consequences, various anti-bullying programs have attempted to increase defending behavior among participating children. However, the cognitions that underlie the effectiveness of interventions in increasing defending remain unknown.",
+          "section": "Abstract",
+          "created_at": "2025-02-12 14:58:17.306000"
+        }
+      ]
+    }
+  ]
+}

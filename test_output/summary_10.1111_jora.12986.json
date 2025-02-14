@@ -1,0 +1,225 @@
+{
+  "doi": "10.1111/jora.12986",
+  "overview": "### Overview:\n- The manuscript demonstrates moderate compliance with reporting guidelines, with detailed data collection and sampling procedure descriptions enhancing reproducibility.\n- **Strengths:** The detailed description of data collection instruments and stratified sampling enhances the study's reproducibility and validity. \n- **Gaps:** Critical gaps include the lack of information on data collection dates, participant dropout rates, and whether data saturation was considered for qualitative data.\n\n### Key Recommendations:\n- **Specify data collection dates:** \n  - *Importance:* Helps in assessing the study's relevance and temporal context.\n- **Report participant dropout rates and response rates:** \n  - *Importance:* Essential for evaluating the study's internal validity and potential biases.\n- **Discuss data saturation for qualitative data (if applicable):** \n  - *Importance:* Ensures comprehensive data collection and supports the validity of qualitative findings.",
+  "categories": [
+    {
+      "category": "Randomization",
+      "summary": "Allocation to groups mentioned, but randomness and exclusion criteria for allocation not specified.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "2.1",
+          "question": "Does the paper specify whether participants were allocated into experimental groups?",
+          "compliance": "Yes",
+          "explanation": "The paper specifies that participants were allocated into experimental groups through the use of latent profile analysis.",
+          "quote": "Latent profile analyses were run with bullying, victimization, and peer status as profile indicators.",
+          "section": "METHOD",
+          "created_at": "2025-02-12 15:13:55.981000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether the allocation of participants into groups was random.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:02.635000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "2.3",
+          "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes how covariates were controlled through the use of latent profile analysis, considering victimization and peer status simultaneously.",
+          "quote": "Latent profile analyses were run with bullying, victimization, rejection, likeability, and popularity as profile indicators.",
+          "section": "METHOD",
+          "created_at": "2025-02-12 15:14:11.014000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "Start and stop dates of data collection, including gaps between collection periods, are not mentioned.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate the start and stop dates of data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:17.558000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state the dates for each sample cohort, nor does it mention if there was a gap between collection periods.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:24.617000"
+        }
+      ]
+    },
+    {
+      "category": "Non-participation",
+      "summary": "No information on participant dropout or decline rates, impacting understanding of sample representativeness.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "5.1",
+          "question": "Does the paper specify how many participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify how many participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:31.542000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on the response rate or explicitly state that no participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:44.378000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "Details on data collection instruments provided, but lacks information on presence of others during data collection.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The paper provides detailed information about the data collection procedure, including the instruments used to record the data such as the Participant Role Questionnaire for peer-reported bullying and victimization, and self-report measures for bullying forms, academic difficulties, depressive symptoms, social anxiety, self-esteem, antibullying attitudes, and empathy toward victims.",
+          "quote": "Peer-reported bullying perpetration and victimization were measured with bullying and victimization subscales from the Participant Role Questionnaire (PRQ, Salmivalli & Voeten, 2004). Three items assessed bullying (initiates bullying; encourages others to join in bullying; always finds new ways of harassing the victim) and three others victimization (is pushed and hit; is called nasty names or made fun of; is talked about in a mean way).",
+          "section": "Measures",
+          "created_at": "2025-02-12 15:13:34.865000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether anyone other than the participant(s) and the researcher was present during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:13:42.044000"
+        }
+      ]
+    },
+    {
+      "category": "Sampling strategy",
+      "summary": "Stratified random sampling method described, but lacks pre-determined sample size calculation and discussion on data saturation for qualitative data.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "6.1",
+          "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+          "compliance": "Yes",
+          "explanation": "The paper describes the sampling procedure as stratified random sampling by province and language.",
+          "quote": "stratified random sampling by province and language was used to include schools from all five provinces of mainland Finland",
+          "section": "Participants and procedure",
+          "created_at": "2025-02-12 15:14:51.874000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:14:58.892000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "Yes",
+          "explanation": "The paper explains how sample sizes were chosen based on data from a large sample of adolescents and provides a rationale for why these sample sizes are sufficient by detailing the study's methodology and analysis approach.",
+          "quote": "The study utilizes data from 10,689 adolescents (48.3% boys, mean age 14.7 years). Latent profile analysis identified three distinct subgroups of bullies: popular-liked bullies (13.5%), popular-rejected bully-victims (5.8%), and bully-victims (6.9%), and four groups on nonbullies.",
+          "section": "Participants and procedure",
+          "created_at": "2025-02-12 15:15:09.484000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "No",
+          "explanation": "The manuscript does not discuss whether data saturation was considered or describe the criteria used to decide that no further sampling was needed for qualitative data.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:15:16.613000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusion of data not mentioned, and criteria for exclusions were not pre-established, affecting data transparency.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "Yes",
+          "explanation": "The manuscript explicitly states that data on any excluded participants were not mentioned, implying all collected data were included in the analyses.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:15:23.728000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate whether exclusion criteria were pre-established for the study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 15:15:40.534000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "Yes",
+          "explanation": "The paper clearly states the research sample, including demographic details and the total number of participants.",
+          "quote": "The study utilizes data from 10,689 adolescents (48.3% boys, mean age 14.7 years).",
+          "section": "Participants and procedure",
+          "created_at": "2025-02-12 15:15:48.520000"
+        },
+        {
+          "doi": "10.1111/jora.12986",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The paper provides a rationale for the study sample chosen, explaining the focus on adolescent bullying perpetrators and the use of latent profile analysis to identify distinct subgroups based on peer-reported bullying, victimization, and peer status.",
+          "quote": "We identified different types of adolescent bullying perpetrators and nonbullies based on peer-reported bullying, victimization, and peer status (popularity, likeability, and rejection) and examined differences between bully subtypes in typical forms of bullying perpetrated.",
+          "section": "Abstract",
+          "created_at": "2025-02-12 15:16:05.297000"
+        }
+      ]
+    }
+  ]
+}

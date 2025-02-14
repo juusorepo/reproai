@@ -4,8 +4,6 @@ primaryColor = "#1E3A8A"  # Deep academic blue
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F8FAFC"
 textColor = "#1E293B"
-
-# Font
 font = "Inter"
 
 [server]

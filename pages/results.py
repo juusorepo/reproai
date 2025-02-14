@@ -59,6 +59,8 @@ if 'log_messages' not in st.session_state:
     st.session_state.log_messages = []
 if 'db_service' not in st.session_state:
     st.session_state.db_service = db_service
+if 'active_tab' not in st.session_state:
+    st.session_state.active_tab = "Select manuscript"
 
 def add_log(message: str):
     """Add a timestamped log message to session state."""
@@ -85,125 +87,75 @@ def get_error_details(e: Exception) -> str:
 
 def display_manuscript_selector():
     """Display a list of analyzed manuscripts and allow selection."""
+    st.markdown('<h2 class="section-title">Analyzed Manuscripts</h2>', unsafe_allow_html=True)
+    
+    # Get list of analyzed manuscripts
     manuscripts = db_service.get_all_manuscripts()
     
     if not manuscripts:
-        st.info("No manuscripts analyzed yet. Upload a manuscript to get started!")
+        st.info("No analyzed manuscripts found. Please upload a manuscript first.")
         return None
     
-    # Format options for selectbox
-    manuscript_options = []
-    for m in manuscripts:
-        title = m.title if hasattr(m, 'title') else 'Untitled'
-        doi = m.doi if hasattr(m, 'doi') else 'No DOI'
-        manuscript_options.append(f"{title} ({doi})")
-    
-    # Display selector
-    selected_idx = st.selectbox(
-        "Select a manuscript to view results:",
-        range(len(manuscript_options)),
-        format_func=lambda x: manuscript_options[x]
+    # Get unique designs for filter
+    designs = sorted(set(m.design for m in manuscripts if hasattr(m, 'design') and m.design))
+    selected_design = st.selectbox(
+        "Filter by study design:",
+        ["All"] + designs,
+        index=0
     )
     
-    if selected_idx is not None:
-        st.session_state.current_manuscript = manuscripts[selected_idx]
-        return manuscripts[selected_idx]
+    # Filter manuscripts by design
+    filtered_manuscripts = manuscripts
+    if selected_design != "All":
+        filtered_manuscripts = [m for m in manuscripts if hasattr(m, 'design') and m.design == selected_design]
+    
+    # Display stats
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Total Manuscripts", len(filtered_manuscripts))
+    with col2:
+        dates = [m.analysis_date for m in filtered_manuscripts if hasattr(m, 'analysis_date')]
+        latest = max(dates).strftime("%Y-%m-%d") if dates else "N/A"
+        st.metric("Latest Analysis", latest)
+    
+    # Create a selection box
+    selected = st.selectbox(
+        "Choose a manuscript to view results:",
+        filtered_manuscripts,
+        format_func=lambda x: f"{x.title} ({x.doi})"
+    )
+    
+    if selected:
+        st.session_state.current_manuscript = selected
+        st.info("✨ View the analysis from the 'Results' tab above.")
+        return selected
+    
     return None
-
-def process_uploaded_file(uploaded_file):
-    """Process uploaded PDF file."""
-    if not uploaded_file:
-        return
-    
-    try:
-        # Save uploaded file to temp file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-            tmp_file.write(uploaded_file.getvalue())
-            pdf_path = tmp_file.name
-        
-        # Extract text from PDF
-        add_log("Extracting text from PDF...")
-        pdf_extractor = PDFExtractor()
-        text = pdf_extractor.extract_text(pdf_path)
-        
-        if not text.strip():
-            st.error("Could not extract text from PDF. Please ensure the file is not scanned/image-based.")
-            return
-        
-        # Extract metadata
-        add_log("Extracting metadata...")
-        metadata = metadata_extractor.extract_metadata(text)
-        
-        # Create manuscript object
-        manuscript = Manuscript(
-            doi=metadata.get('doi', 'No DOI'),
-            title=metadata.get('title', 'Untitled'),
-            authors=metadata.get('authors', []),
-            design=metadata.get('design', ''),
-            text=text
-        )
-        
-        # Save manuscript
-        add_log("Saving manuscript...")
-        db_service.save_manuscript(manuscript)
-        
-        # Analyze compliance
-        add_log("Analyzing reproducibility compliance...")
-        results = compliance_analyzer.analyze_manuscript(text)
-        
-        # Save results
-        add_log("Saving analysis results...")
-        db_service.save_compliance_results(results, manuscript.doi)
-        
-        # Generate summary
-        add_log("Generating summary...")
-        overview, category_summaries = summarize_service.summarize_results(results)
-        db_service.save_summary(manuscript.doi, overview, category_summaries)
-        
-        st.success("✅ Manuscript processed successfully!")
-        st.session_state.current_manuscript = manuscript.to_dict()
-        
-    except Exception as e:
-        error_details = get_error_details(e)
-        st.error(f"Error processing manuscript: {error_details}")
-        add_log(f"ERROR: {error_details}")
-    
-    finally:
-        # Clean up temp file
-        if 'pdf_path' in locals():
-            try:
-                os.remove(pdf_path)
-            except:
-                pass
 
 def main():
     """Main app function."""
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h1 class="custom-title">Analysis Results</h1>
-            <p class="custom-subtitle">View and Review Manuscript Analysis</p>
+            <h1>Analysis Results</h1>
         </div>
     """, unsafe_allow_html=True)
     
-    # Create tabs
-    tab1, tab2, tab3 = st.tabs([
-        "Manuscript",
-        "Results",
-        "Review"
-    ])
+    # Initialize database service
+    db_service = DatabaseService(st.secrets["MONGODB_URI"])
+    
+    # Initialize active tab in session state if not present
+    if 'active_tab' not in st.session_state:
+        st.session_state.active_tab = "Select manuscript"
+    
+    # Create tabs for different views
+    tabs = ["Select manuscript", "Results", "Detailed Review"]
+    tab1, tab2, tab3 = st.tabs(tabs)
+    
+    # Set active tab if changed
+    active_tab_index = tabs.index(st.session_state.active_tab)
     
     with tab1:
-        col1, col2 = st.columns([2, 1])
-        with col1:
-            st.markdown('<h2 class="section-title">Previous Manuscripts</h2>', unsafe_allow_html=True)
-            selected_manuscript = display_manuscript_selector()
-        
-        with col2:
-            st.markdown('<h3 class="section-subtitle">Upload New</h3>', unsafe_allow_html=True)
-            st.markdown('<div class="secondary-button">', unsafe_allow_html=True)
-            if st.button("Upload Manuscript", use_container_width=True):
-                st.switch_page("streamlit_app.py")
-            st.markdown('</div>', unsafe_allow_html=True)
+        display_manuscript_selector()
     
     with tab2:
         if st.session_state.current_manuscript:
@@ -212,7 +164,7 @@ def main():
         else:
             st.markdown("""
                 <div class="ai-insight">
-                    Select a manuscript to view results
+                    Please select a manuscript first to view analysis results.
                 </div>
             """, unsafe_allow_html=True)
     
@@ -224,7 +176,7 @@ def main():
         else:
             st.markdown("""
                 <div class="ai-insight">
-                    Select a manuscript to view detailed analysis
+                    Please select a manuscript first to view detailed review.
                 </div>
             """, unsafe_allow_html=True)
 

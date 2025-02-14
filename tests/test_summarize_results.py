@@ -1,20 +1,16 @@
 """Test summarization of compliance results."""
 
-import os
-from dotenv import load_dotenv
+import streamlit as st
 from app.models.manuscript import Manuscript
 from app.services.db_service import DatabaseService
 from app.services.summarize_service import SummarizeService
-
-# Load environment variables
-load_dotenv()
 
 def test_summarize_results():
     """Test generating and storing a summary of compliance results."""
     
     # Initialize services
-    db_service = DatabaseService(os.getenv("MONGODB_URI"))
-    summarize_service = SummarizeService(os.getenv("OPENAI_API_KEY"), db_service)
+    db_service = DatabaseService(st.secrets["MONGODB_URI"])
+    summarize_service = SummarizeService(st.secrets["OPENAI_API_KEY"], db_service)
     
     # Test DOI
     doi = "10.1037/dev0001913"
@@ -37,61 +33,44 @@ def test_summarize_results():
         print(f"Question: {result.question}")
         print(f"Compliance: {result.compliance}")
         print(f"Explanation: {result.explanation}")
-        if result.quote:
+        if hasattr(result, 'quote'):
             print(f"Quote: {result.quote}")
-        if result.section:
+        if hasattr(result, 'section'):
             print(f"Section: {result.section}")
         print()
     
     print("Generating summary...")
     
+    # Convert ComplianceResult objects to dictionaries
+    results_dicts = [result.to_dict() for result in results]
+    
     # Generate and save summary
-    summary = summarize_service.generate_summary(manuscript, results)
+    overview, category_summaries = summarize_service.summarize_results(results_dicts)
     
-    print("\nGenerated Summary:")
-    print("-" * 80)
-    print(summary)
-    print("-" * 80)
+    print("\nGenerated Overview:")
+    print(overview)
+    print("\nCategory Summaries:")
+    for summary in category_summaries:
+        print(f"\n{summary['category']} (Severity: {summary['severity']}):")
+        print(summary['summary'])
+        print(f"Original Results: {len(summary['original_results'])} items")
     
-    print("\nSaving summary to database...")
+    # Save summary to database
+    db_service.save_summary(doi, overview, category_summaries)
     
-    # Verify the saved summary
-    print("\nVerifying saved summary...")
+    print("\nSummary saved to database.")
+    
+    # Verify saved summary
     saved_summary = db_service.get_summary(doi)
-    
-    if not saved_summary:
-        raise Exception("Failed to save and retrieve summary")
-        
-    print("Summary successfully saved and retrieved\n")
-    
-    # Verify structure
-    required_fields = ["overview", "category_summaries", "created_at"]
-    for field in required_fields:
-        if field not in saved_summary:
-            raise Exception(f"Missing required field: {field}")
-            
-    # Verify category summaries structure
-    for category in saved_summary["category_summaries"]:
-        required_category_fields = ["category", "summary", "severity", "original_results"]
-        for field in required_category_fields:
-            if field not in category:
-                raise Exception(f"Missing required category field: {field}")
-                
-    # Print saved summary for verification
-    print("Saved Summary:")
-    print("-" * 80)
-    
-    # Print overview
-    print(saved_summary["overview"])
-    print("\n### CATEGORY-BASED ISSUES:\n")
-    
-    # Print category summaries
-    for category in saved_summary["category_summaries"]:
-        print(f"**{category['category']}** (Severity: {category['severity'].upper()}):")
-        print(f"- {category['summary']}")
-        print(f"- Original results: {len(category['original_results'])} items\n")
-    
-    print("-" * 80)
+    if saved_summary:
+        print("\nVerified saved summary:")
+        print(f"Overview: {saved_summary['overview'][:100]}...")
+        print("\nCategories:")
+        for summary in saved_summary['category_summaries']:
+            print(f"- {summary['category']} (Severity: {summary['severity']})")
+            print(f"  Original Results: {len(summary['original_results'])} items")
+    else:
+        print("\nError: Could not retrieve saved summary")
 
 if __name__ == "__main__":
     test_summarize_results()

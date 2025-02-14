@@ -1,0 +1,57 @@
+{
+  "doi": "10.1111/j.1469-7610.2010.02216.x",
+  "overview": "### Overview:\n- The manuscript demonstrates partial compliance with reporting guidelines, with detailed data collection procedures enhancing reproducibility but lacking in random allocation and data exclusion transparency.\n- **Strengths:** The detailed description of data collection instruments and methods is a strong point, ensuring clarity on how data was gathered and assessed.\n- **Gaps:** The most critical gaps include the absence of information on participant group allocation and whether any data were excluded from analyses, which are vital for evaluating the study's validity and bias.\n\n### Key Recommendations:\n- **Clarify Participant Allocation:** \n  - *What needs to be added/changed:* Explicitly state if and how participants were allocated into groups.\n  - *Why it's important:* To assess the potential for selection bias and ensure the replicability of the study design.\n  \n- **Disclose Data Exclusion Details:**\n  - *What needs to be added/changed:* Include information on any data excluded from the analyses.\n  - *Why it's important:* Transparency about data exclusion is crucial for understanding the analysis's comprehensiveness and integrity.",
+  "categories": [
+    {
+      "category": "Randomization",
+      "summary": "Paper lacks details on participant group allocation, impacting study reproducibility.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1111/j.1469-7610.2010.02216.x",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "No",
+          "explanation": "The manuscript does not mention the allocation of participants into groups or whether such allocation was random.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:40:21.688000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusion criteria for data not mentioned, affecting analysis transparency.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1111/j.1469-7610.2010.02216.x",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether any data were excluded from the analyses.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-12 14:41:00.231000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1111/j.1469-7610.2010.02216.x",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides detailed information about the data collection procedure, including the instruments or devices used to record the data, such as the Child Behavior Checklist for mothers, the Teacher's Report Form for teachers, and the Five Minute Speech Sample method for assessing maternal warmth.",
+          "quote": "We assessed emotional and behavioural problems using the Child Behavior Checklist for mothers (Achenbach, 1991a) and the Teacher's Report Form for teachers (Achenbach, 1991b). Mothers were given the instrument as a face-to-face interview and teachers responded by mail.",
+          "section": "Methods",
+          "created_at": "2025-02-12 14:40:07.504000"
+        }
+      ]
+    }
+  ]
+}

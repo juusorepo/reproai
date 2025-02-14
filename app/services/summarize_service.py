@@ -41,7 +41,7 @@ class SummarizeService:
         with open(prompts_dir / "summarize_categories.txt", 'r', encoding='utf-8') as f:
             self.categories_template = f.read()
             
-    def _format_results_for_prompt(self, results: List[ComplianceResult], checklist_items: List[Dict]) -> Tuple[str, Dict[str, List[ComplianceResult]]]:
+    def _format_results_for_prompt(self, results: List[Dict[str, Any]], checklist_items: List[Dict]) -> Tuple[str, Dict[str, List[Dict[str, Any]]]]:
         """Format compliance results for the prompt.
         
         Args:
@@ -49,48 +49,153 @@ class SummarizeService:
             checklist_items: List of checklist items with categories
             
         Returns:
-            Tuple of (formatted string, category_results mapping)
+            Tuple containing:
+            - Formatted results string for overview
+            - Dictionary mapping categories to their results
         """
-        # Create mapping of item_id to category
-        item_categories = {item["item_id"]: item["category"] for item in checklist_items}
+        # Create item_id to category mapping
+        item_categories = {item['item_id']: item['category'] for item in checklist_items}
         
         # Group results by category
-        category_results = defaultdict(list)
+        results_by_category = defaultdict(list)
+        formatted_results = []
+        
         for result in results:
-            category = item_categories.get(result.item_id, "Other")
-            category_results[category].append(result)
+            item_id = result['item_id']
+            category = item_categories.get(item_id, 'Uncategorized')
+            results_by_category[category].append(result)
             
-        # Format results by category
-        formatted = []
-        for category, cat_results in category_results.items():
-            formatted.append(f"\nCategory: {category}")
-            for result in cat_results:
-                item = f"\nItem {result.item_id}:\n"
-                item += f"Question: {result.question}\n"
-                item += f"Compliance: {result.compliance}\n"
-                item += f"Explanation: {result.explanation}\n"
-                if result.quote:
-                    item += f"Quote: {result.quote}\n"
-                if result.section:
-                    item += f"Section: {result.section}\n"
-                formatted.append(item)
-                
-        return "\n".join(formatted), dict(category_results)
+            formatted_result = (
+                f"Item {item_id}:\n"
+                f"Question: {result['question']}\n"
+                f"Compliance: {result['compliance']}\n"
+                f"Explanation: {result['explanation']}\n"
+                f"Supporting Quotes: {result.get('quote', 'None')}\n"
+                f"Manuscript DOI: {result.get('doi', 'No DOI')}\n"
+            )
+            formatted_results.append(formatted_result)
             
-    def _clean_json_response(self, response: str) -> str:
-        """Clean JSON response by removing markdown code block markers.
+        return "\n".join(formatted_results), dict(results_by_category)
+
+    def summarize_results(self, results: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
+        """Generate summary of compliance analysis results.
         
         Args:
-            response: Raw response from LLM
+            results: List of compliance results
             
         Returns:
-            Cleaned JSON string
+            Tuple containing:
+            - Overview summary
+            - List of category summaries, each containing:
+              - category: Category name
+              - summary: Category-specific summary
+              - severity: Severity level (low, medium, high)
+              - original_results: List of original compliance results for the category
         """
-        # Remove markdown code block markers if present
-        response = re.sub(r'^```json\s*', '', response)
-        response = re.sub(r'\s*```$', '', response)
-        return response.strip()
+        try:
+            if not results:
+                return "", []
+                
+            # Get checklist items for categories
+            checklist_items = self.db_service.get_checklist_items()
             
+            # Format results for prompts
+            formatted_results, results_by_category = self._format_results_for_prompt(results, checklist_items)
+            
+            # Generate overview summary
+            overview_prompt = self.overview_template.format(
+                results=formatted_results,
+                manuscript_doi=results[0].get('doi', 'No DOI') if results else 'No DOI'
+            )
+            overview = get_llm_response(
+                prompt=overview_prompt,
+                system_prompt="You are a scientific manuscript analyzer that summarizes compliance analysis results.",
+                temperature=0.3,
+                response_format={"type": "text"}
+            )
+            
+            # Format all categories for a single API call
+            all_categories_results = []
+            categories = []
+            for category, category_results in results_by_category.items():
+                categories.append(category)
+                formatted_results = "\n".join([
+                    f"Category: {category}\n"
+                    f"Item {r['item_id']}:\n"
+                    f"Question: {r['question']}\n"
+                    f"Compliance: {r['compliance']}\n"
+                    f"Explanation: {r['explanation']}\n"
+                    f"Supporting Quotes: {r.get('quote', 'None')}\n"
+                    f"Manuscript DOI: {r.get('doi', 'No DOI')}\n"
+                    for r in category_results
+                ])
+                all_categories_results.append(formatted_results)
+            
+            # Generate all category summaries in one call
+            categories_prompt = self.categories_template.format(
+                categories=", ".join(categories),
+                results="\n\n".join(all_categories_results),
+                manuscript_doi=results[0].get('doi', 'No DOI') if results else 'No DOI'
+            )
+            
+            # Get JSON response for all categories
+            json_response = get_llm_response(
+                prompt=categories_prompt,
+                system_prompt="You are a scientific manuscript analyzer that summarizes compliance analysis results for specific categories. Return only valid JSON.",
+                temperature=0.3,
+                response_format={"type": "json_object"}
+            )
+            
+            # Parse JSON response
+            try:
+                cleaned_json = json_response.strip()
+                if not cleaned_json.startswith('{'):
+                    print("Error: Invalid JSON response format")
+                    raise json.JSONDecodeError("Invalid JSON", json_response, 0)
+                
+                categories_data = json.loads(cleaned_json)
+                
+                if not isinstance(categories_data, dict) or 'categories' not in categories_data:
+                    print("Error: Invalid JSON structure")
+                    raise ValueError("Invalid JSON structure")
+                
+                category_summaries = []
+                for category, data in categories_data['categories'].items():
+                    if not isinstance(data, dict):
+                        print(f"Warning: Invalid data format for category {category}")
+                        continue
+                        
+                    category_summaries.append({
+                        'category': category,
+                        'summary': data.get('summary', ''),
+                        'severity': data.get('severity', 'low'),
+                        'original_results': results_by_category.get(category, [])
+                    })
+                
+                severity_order = {'high': 0, 'medium': 1, 'low': 2}
+                category_summaries.sort(key=lambda x: severity_order.get(x['severity'].lower(), 3))
+                
+                return overview, category_summaries
+                    
+            except (json.JSONDecodeError, ValueError) as e:
+                print(f"Error: {str(e)}")
+                category_summaries = []
+                for category, category_results in results_by_category.items():
+                    severity = 'high' if any(r.get('compliance') == 'No' for r in category_results) \
+                             else 'medium' if any(r.get('compliance') == 'Partial' for r in category_results) \
+                             else 'low'
+                    category_summaries.append({
+                        'category': category,
+                        'summary': f"Error generating summary for {category}",
+                        'severity': severity,
+                        'original_results': category_results
+                    })
+                return overview, category_summaries
+                
+        except Exception as e:
+            print(f"Error generating summary: {str(e)}")
+            return "", []
+
     def generate_summary(self, manuscript: Manuscript, results: List[ComplianceResult]) -> str:
         """Generate a summary of compliance results.
         
@@ -113,7 +218,7 @@ class SummarizeService:
         )
         
         # Format results and get category mapping
-        formatted_results, category_results = self._format_results_for_prompt(results, checklist_items)
+        formatted_results, category_results = self._format_results_for_prompt([result.to_dict() for result in results], checklist_items)
         
         # Get overview summary
         overview = get_llm_response(
@@ -123,7 +228,8 @@ class SummarizeService:
             ),
             system_prompt="You are a scientific manuscript analyzer that summarizes compliance analysis results. Be concise and focus on key findings and actionable recommendations.",
             temperature=0.3,  # Slightly higher for more natural language
-            max_tokens_output=1000  # Overview should be concise
+            max_tokens_output=1000,  # Overview should be concise
+            response_format={"type": "text"}
         )
         
         # Get category-based summary
@@ -140,11 +246,9 @@ class SummarizeService:
         
         # Parse categories and prepare structured summary
         try:
-            # Clean the JSON response
             categories_json = self._clean_json_response(categories_json)
             categories = json.loads(categories_json)
             
-            # Prepare category summaries for database
             category_summaries = []
             for category in all_categories:
                 if category in categories["categories"]:
@@ -160,13 +264,11 @@ class SummarizeService:
                         "category": category,
                         "summary": "ok.",
                         "severity": "low",
-                        "original_results": [result.to_dict() for result in category_results.get(category, [])]
+                        "original_results": []
                     })
             
-            # Save structured summary to database
             self.db_service.save_summary(manuscript.doi, overview, category_summaries)
             
-            # Format the display summary
             final_summary = overview + "\n\n### CATEGORY-BASED ISSUES:\n\n"
             for summary in category_summaries:
                 final_summary += f"**{summary['category']}** (Severity: {summary['severity'].upper()}):\n"
@@ -178,3 +280,23 @@ class SummarizeService:
             final_summary = overview + "\n\nError: Could not parse category-based issues."
         
         return final_summary
+
+    def _clean_json_response(self, response: str) -> str:
+        """Clean JSON response by removing markdown code block markers.
+        
+        Args:
+            response: Raw response from LLM
+            
+        Returns:
+            Cleaned JSON string
+        """
+        response = re.sub(r'^```(?:json)?\s*', '', response)
+        response = re.sub(r'\s*```$', '', response)
+        
+        response = response.strip()
+        first_brace = response.find('{')
+        last_brace = response.rfind('}')
+        if first_brace != -1 and last_brace != -1:
+            response = response[first_brace:last_brace + 1]
+            
+        return response.strip()

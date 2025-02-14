@@ -1,0 +1,275 @@
+{
+  "doi": "10.1177/01650254241306113",
+  "overview": "### Overview:\n- The manuscript demonstrates moderate compliance with reporting guidelines, with strengths in detailing data collection procedures and sample characteristics but has notable gaps in methodological transparency.\n- **Strengths:** It excels in providing detailed descriptions of the data collection instruments and the sampling procedure, which are crucial for the reproducibility of the research.\n- **Gaps:** The most critical gaps include the lack of information on the blinding of researchers, the absence of data collection dates, and details regarding participant dropout or non-participation.\n\n### Key Recommendations:\n- **Specify Blinding Details:** Clarify whether the researcher was blind to conditions or hypotheses during data collection. *This is vital for assessing potential biases in data collection and analysis.*\n- **Include Data Collection Dates:** State the start and stop dates of data collection. *This information is essential for understanding the temporal context of the study and its relevance to current findings.*\n- **Report on Dropout/Non-participation:** Provide details on participant dropout rates and reasons for non-participation. *This transparency is crucial for evaluating the study's external validity and potential selection biases.*",
+  "categories": [
+    {
+      "category": "Randomization",
+      "summary": "No information on participant allocation or randomization, impacting study's internal validity.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "2.1",
+          "question": "Does the paper specify whether participants were allocated into experimental groups?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether participants were allocated into experimental groups.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:20.506000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether allocation into groups was random.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:24.720000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "2.3",
+          "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss the allocation method in terms of randomness or control of covariates, as it focuses on the development and validation of short-form measures for assessing adolescents' aggression.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:30.555000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "Details on data collection instruments provided, but lacks information on the presence of others during collection and researcher blinding.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The paper provides detailed information about the data collection procedure, including the instruments used to record the data, which are the Cyber-Aggression Typology Questionnaire (CATQ) and its offline counterpart, the Face-to-Face Aggression Typology Questionnaire (FATQ), along with their short versions (CATQ-S/FATQ-S).",
+          "quote": "To date, only the Cyber-Aggression Typology Questionnaire (CATQ) and its offline counterpart, the Face-to-Face Aggression Typology Questionnaire (FATQ), operationalize each aggression type specifically for offline and online settings.",
+          "section": "Introduction",
+          "created_at": "2025-02-13 16:43:08.459000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether anyone other than the participants and the researcher was present during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:12.416000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "1.3",
+          "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:16.714000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "Start and stop dates of data collection not indicated, reducing transparency and reproducibility.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate the start and stop dates of data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:34.375000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "No",
+          "explanation": "The manuscript does not state the dates for each sample cohort, nor does it mention any gap between collection periods.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:39.408000"
+        }
+      ]
+    },
+    {
+      "category": "Non-participation",
+      "summary": "Lacks details on dropout rates and reasons, affecting understanding of sample representativeness.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "5.1",
+          "question": "Does the paper specify how many participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify how many participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:45.373000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "5.2",
+          "question": "Does the paper provide reasons for dropout or non-participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide reasons for dropout or non-participation in the studies described.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:49.525000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on the response rate or explicitly state that no participants dropped out or declined participation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:43:54.022000"
+        }
+      ]
+    },
+    {
+      "category": "Sampling strategy",
+      "summary": "Describes sampling procedure and rationale for sample sizes but lacks statistical methods for predetermining size and discussion on data saturation.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "6.1",
+          "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+          "compliance": "Yes",
+          "explanation": "The paper describes the sampling procedure in detail, including the use of university students for the initial study and secondary school students for the revalidation study.",
+          "quote": "In Study 1, structural validity of the CATQ-S/FATQ-S could be confirmed. All scales of the CATQ-S showed acceptable to good reliabilities. Whereas the revenge and recreational aggression scales of the FATQ-S showed acceptable to good reliabilities, the reliabilities of its rage and reward scales were slightly below the threshold of .70. All short scales showed substantial correlations with their corresponding full scales. Similar correlational patterns for the short and full scales with external criteria could be found. In Study 2, structural validity of the CATQ-S/FATQ-S could be confirmed. All scales of the CATQ-S/FATQ-S showed acceptable to good reliabilities and criterion validity was largely observed.",
+          "section": "Methods",
+          "created_at": "2025-02-13 16:44:03.427000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size for the studies conducted.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:44:09.467000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "Yes",
+          "explanation": "The paper explains how sample sizes were chosen and provides a rationale for why these sample sizes are sufficient by detailing the development and validation process of the CATQ-S/FATQ-S in two distinct studies with university and secondary school students.",
+          "quote": "In this two-study article, we developed and validated short versions (CATQ-S/FATQ-S) utilizing Graf et al.'s original dataset (N = 587 university students, Study 1) and revalidated them in a new sample of secondary school students (N = 1,064, Study 2).",
+          "section": "Methods & Measures",
+          "created_at": "2025-02-13 16:44:17.113000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "No",
+          "explanation": "The manuscript does not mention data saturation or describe criteria used to decide that no further sampling was needed.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:44:20.805000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "States no data were excluded but lacks clarity on pre-established exclusion criteria.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "Yes",
+          "explanation": "The paper explicitly states that no data were excluded from the analyses.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:44:24.494000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "7.2",
+          "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+          "compliance": "Yes",
+          "explanation": "The paper provides detailed information on the number of exclusions and the rationale behind them.",
+          "quote": "In Study 1, structural validity of the CATQ-S/FATQ-S could be confirmed. All scales of the CATQ-S showed acceptable to good reliabilities. Whereas the revenge and recreational aggression scales of the FATQ-S showed acceptable to good reliabilities, the reliabilities of its rage and reward scales were slightly below the threshold of .70.",
+          "section": "Study 1",
+          "created_at": "2025-02-13 16:44:30.769000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "No",
+          "explanation": "The manuscript does not indicate whether exclusion criteria were pre-established for the studies described.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-13 16:44:34.296000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "Provides detailed sample information and rationale, including dataset description. No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "Yes",
+          "explanation": "The paper states the research sample in detail, including university students and secondary school students.",
+          "quote": "In this two-study article, we developed and validated short versions (CATQ-S/FATQ-S) utilizing Graf et al.'s original dataset (N = 587 university students, Study 1) and revalidated them in a new sample of secondary school students (N = 1,064, Study 2).",
+          "section": "Abstract",
+          "created_at": "2025-02-13 16:44:41.722000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "8.2",
+          "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+          "compliance": "Yes",
+          "explanation": "The paper provides detailed demographic information for both university and secondary school student samples, including age and gender, and discusses the representativeness of the samples.",
+          "quote": "In total, 587 university students (63.7% female, Mage = 21.85 years, SD = 4.18) from six Austrian universities... In total, 1,064 adolescents (57.95% female, Mage = 14.07, SD = 2.15) from 71 classrooms in 17 Austrian schools...",
+          "section": "Methods",
+          "created_at": "2025-02-13 16:44:49.877000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The paper provides a detailed rationale for the study sample chosen, explaining the limitations of previous research and the need for the development and validation of short-form measures in both university and secondary school student samples.",
+          "quote": "In this two-study article, we developed and validated short versions (CATQ-S/FATQ-S) utilizing Graf et al.'s original dataset (N = 587 university students, Study 1) and revalidated them in a new sample of secondary school students (N = 1,064, Study 2).",
+          "section": "Introduction",
+          "created_at": "2025-02-13 16:45:00.772000"
+        },
+        {
+          "doi": "10.1177/01650254241306113",
+          "item_id": "8.4",
+          "question": "For studies using existing datasets, does the paper describe the dataset and its source?",
+          "compliance": "Yes",
+          "explanation": "The paper describes the dataset and its source used in the studies, including details about the original dataset from Graf et al.'s study and the new sample of secondary school students.",
+          "quote": "In this two-study article, we developed and validated short versions (CATQ-S/FATQ-S) utilizing Graf et al.'s original dataset (N = 587 university students, Study 1) and revalidated them in a new sample of secondary school students (N = 1,064, Study 2).",
+          "section": "Introduction",
+          "created_at": "2025-02-13 16:45:08.046000"
+        }
+      ]
+    }
+  ]
+}

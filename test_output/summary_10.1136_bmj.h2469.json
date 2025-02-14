@@ -1,0 +1,275 @@
+{
+  "doi": "10.1136/bmj.h2469",
+  "overview": "### Overview:\nThe manuscript exhibits a high level of compliance with reporting guidelines, particularly in detailing data collection procedures and handling of covariates, which are crucial for reproducibility. However, it lacks specific information on the start and stop dates of data collection and the statistical methods used for predetermining sample size.\n\n### Strengths:\n- Provides detailed information on data collection instruments and procedures, enhancing reproducibility.\n- Describes the handling of covariates and missing data comprehensively.\n\n### Gaps:\n- Absence of specific start and stop dates for data collection.\n- Lacks explanation on the predetermination of sample size and rationale for sufficiency.\n\n### Key Recommendations:\n- **Include specific start and stop dates of data collection**: Essential for understanding the temporal context and replicability of the study.\n- **Detail the statistical methods used for predetermining sample size**: Critical for assessing the study's power and generalizability.\n- **Provide rationale for sample size sufficiency**: Helps in evaluating the robustness of the study findings.",
+  "categories": [
+    {
+      "category": "Sampling strategy",
+      "summary": "Sampling procedure is described, but lacks details on sample size determination and rationale for sufficiency.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "6.1",
+          "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes the sampling procedure as a community-based birth cohort from the Avon Longitudinal Study of Parents and Children (ALSPAC) in the United Kingdom.",
+          "quote": "setting Avon Longitudinal Study of Parents and Children, a UK community based birth cohort.",
+          "section": "ABSTRACT",
+          "created_at": "2025-02-07 16:03:21.954000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:03:26.023000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide information on how sample sizes were chosen nor does it offer a rationale for why these sample sizes are sufficient.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:03:30.413000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "n/a",
+          "explanation": "The manuscript is based on a longitudinal observational study and primarily deals with quantitative data analysis regarding peer victimisation and its impact on depression. It does not involve qualitative data collection or analysis, hence considerations regarding data saturation are not applicable.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:03:36.217000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "Data collection details are well-documented, but lacks information on the presence of others during data collection and blinding of researchers.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides detailed information about the data collection procedure, including the instruments or devices used to record the data, such as the clinical interview schedule-revised for assessing depression and the modified version of the bullying and friendship interview schedule for assessing peer victimisation.",
+          "quote": "Participants completed a self administered computerised version of the clinical interview schedule-revised at the 18 year research clinic. We assessed peer victimisation through self report using a modified version of the bullying and friendship interview schedule.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:02:12.306000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "n/a",
+          "explanation": "The manuscript focuses on a longitudinal observational study analyzing the association between peer victimisation during adolescence and depression in early adulthood, based on data from the Avon Longitudinal Study of Parents and Children. It does not involve direct data collection from participants by the researchers where the presence of others could be applicable or reported.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:02:17.943000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "1.3",
+          "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss the blinding of researchers to experimental conditions or study hypotheses during data collection, which is typical for observational studies like this one.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:02:23.475000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "Specific start and stop dates of data collection are missing, which could affect reproducibility.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide specific start and stop dates of data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:02:47.101000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the dates for the sample cohort's data collection periods.",
+          "quote": "All pregnant women resident in the former Avon Health Authority in south west England, with an estimated date of delivery between 1 April 1991 and 31 December 1992, were eligible to take part.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:02:52.178000"
+        }
+      ]
+    },
+    {
+      "category": "Non-participation",
+      "summary": "Details on dropout and reasons are provided, but lacks specific response rates.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "5.1",
+          "question": "Does the paper specify how many participants dropped out or declined participation?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the number of participants who dropped out or did not attend the clinic at age 13, which is relevant to their participation in the study.",
+          "quote": "Excluded (n=9880): Died (n=92) Untraceable (n=627) Withdrawn (n=505) Did not attend clinic at age 13 (n=8656)",
+          "section": "Flowchart of participants in avon longitudinal study of Parents and Children",
+          "created_at": "2025-02-07 16:03:01.639000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "5.2",
+          "question": "Does the paper provide reasons for dropout or non-participation?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides reasons for dropout or non-participation, mentioning that those lost to follow-up were no more likely to have been bullied as an adolescent than those with complete data.",
+          "quote": "Attrition depended on several factors, but those lost to follow-up were no more likely to have been bullied as an adolescent (odds ratio 1.00, 95% confidence interval 0.98 to 1.02, P=0.78) than those with complete data.",
+          "section": "Missing data analyses",
+          "created_at": "2025-02-07 16:03:10.172000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide specific response rates or explicitly state that no participants dropped out or declined participation. It discusses attrition and missing data but does not give a clear response rate.",
+          "quote": "Attrition depended on several factors, but those lost to follow-up were no more likely to have been bullied as an adolescent (odds ratio 1.00, 95% confidence interval 0.98 to 1.02, P=0.78) than those with complete data.",
+          "section": "Missing data analyses",
+          "created_at": "2025-02-07 16:03:17.200000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusions are well-documented, but the manuscript does not indicate if criteria were pre-established.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "Yes",
+          "explanation": "The manuscript mentions the exclusion of data due to missing information and describes the handling of missing data through imputation methods.",
+          "quote": "A sample with complete data across all exposure, outcome, and confounding variables (n=2668) was used to investigate the main and independent effects of victimisation by peers in adolescence. In ALSPAC there is a wealth of information on sociodemographic variables and other variables that predict missingness. These data therefore make the \"missing at random\" assumption underlying multiple imputation much more reasonable.",
+          "section": "RESEARCH",
+          "created_at": "2025-02-07 16:03:42.845000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "7.2",
+          "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides the exact number of exclusions and the rationale behind them, detailing the flow of participants through the study and reasons for missing data.",
+          "quote": "Excluded (n=9880): Died (n=92) Untraceable (n=627) Withdrawn (n=505) Did not attend clinic at age 13 (n=8656)",
+          "section": "Flowchart of participants in avon longitudinal study of Parents and Children",
+          "created_at": "2025-02-07 16:03:48.938000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "No",
+          "explanation": "The manuscript does not explicitly indicate whether exclusion criteria were pre-established for the study participants.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:03:52.229000"
+        }
+      ]
+    },
+    {
+      "category": "Randomization",
+      "summary": "Not applicable due to the observational nature of the study, but good control of covariates is noted.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "2.1",
+          "question": "Does the paper specify whether participants were allocated into experimental groups?",
+          "compliance": "n/a",
+          "explanation": "The manuscript describes a longitudinal observational study, not an experimental study with groups allocated by the researchers. Therefore, the checklist item regarding allocation into experimental groups is not applicable.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:02:29.038000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "n/a",
+          "explanation": "The study is an observational cohort study, not a trial involving allocation of participants into groups.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 16:02:35.525000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "2.3",
+          "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes how covariates were controlled in the analysis to account for potential confounding factors.",
+          "quote": "In univariable models we used logistic regression analyses to calculate odds ratios for depression at age 18 according to victimisation at age 13 (measured as a three level categorical victimisation variable and as a continuous variable). A quadratic term was used to investigate the possibility of a non-linear relation between victimisation and depression. We conducted a final multivariable model including all confounding variables.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:02:42.379000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the research sample as participants from the Avon Longitudinal Study of Parents and Children (ALSPAC) cohort in the United Kingdom.",
+          "quote": "The sample comprised participants from the ALSPAC cohort (www.alspac.bris.ac.uk)20 ; ALSPAC is a trans-generational prospective observational study investigating a wide range of influences on the health and development of children.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:03:57.592000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "8.2",
+          "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides relevant demographic information, including age and sex, and discusses the representativeness of the sample.",
+          "quote": "The sample comprised participants from the ALSPAC cohort (www.alspac.bris.ac.uk)20 ; ALSPAC is a trans-generational prospective observational study investigating a wide range of influences on the health and development of children. All pregnant women resident in the former Avon Health Authority in south west England, with an estimated date of delivery between 1 April 1991 and 31 December 1992, were eligible to take part.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:04:04.759000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides a rationale for the study sample chosen, explaining the use of the Avon Longitudinal Study of Parents and Children (ALSPAC) cohort, which is a community-based birth cohort in the United Kingdom. This cohort allows for a longitudinal observational study design to investigate the association between victimisation by peers at age 13 and depression at age 18.",
+          "quote": "Using data from over 3700 families from the Avon Longitudinal Study of Parents and Children (ALSPAC) cohort in the United Kingdom, we investigated the strength of the association between being victimised by peers in early adolescence and the emergence of depression at age 18 years, while taking account of several confounders, including previous victimisation in childhood and mental health problems.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:04:12.909000"
+        },
+        {
+          "doi": "10.1136/bmj.h2469",
+          "item_id": "8.4",
+          "question": "For studies using existing datasets, does the paper describe the dataset and its source?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes the dataset and its source in detail, including the cohort name, geographical location, time frame, and participant information.",
+          "quote": "The sample comprised participants from the ALSPAC cohort (www.alspac.bris.ac.uk)20 ; ALSPAC is a trans-generational prospective observational study investigating a wide range of influences on the health and development of children. All pregnant women resident in the former Avon Health Authority in south west England, with an estimated date of delivery between 1 April 1991 and 31 December 1992, were eligible to take part.",
+          "section": "Methods",
+          "created_at": "2025-02-07 16:04:20.206000"
+        }
+      ]
+    }
+  ]
+}

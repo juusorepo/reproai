@@ -1,0 +1,275 @@
+{
+  "doi": "10.1017/S0954579423001384",
+  "overview": "### Overview:\n- The manuscript demonstrates a high level of compliance with reporting guidelines, particularly in detailing data collection procedures and participant demographics, which are crucial for reproducibility.\n- **Strengths:** The detailed description of the data collection process and the comprehensive demographic information enhance the transparency and reproducibility of the research.\n- **Gaps:** The most critical gaps include the lack of specification on whether anyone other than participants and researchers were present during data collection and the absence of a predetermination method for sample size.\n\n### Key Recommendations:\n- **Specify Presence During Data Collection:** Clarify whether individuals other than participants and researchers were present during data collection. This is important for understanding potential biases or influences on the data.\n- **Describe Sample Size Determination:** Provide a rationale or method for the chosen sample size to ensure the study's statistical power and representativeness.",
+  "categories": [
+    {
+      "category": "Sampling strategy",
+      "summary": "Sampling procedure described, but lacks predetermination of sample size and rationale for sufficiency.",
+      "severity": "high",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "6.1",
+          "question": "Does the paper describe the sampling procedure (e.g. random, snowball, stratified, convenience)?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes the sampling procedure, indicating that the study included students who received active parental consent and gave their assent.",
+          "quote": "Only students who received active parental consent and gave their assent (70.8%) were included in our analyses.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:03:14.420000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "6.2",
+          "question": "Does the paper describe the statistical methods used to predetermine sample size?",
+          "compliance": "No",
+          "explanation": "The manuscript does not describe the statistical methods used to predetermine sample size.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:03:18.358000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "6.3",
+          "question": "If no sample-size calculation was performed, does the paper explain how sample sizes were chosen and provide a rationale for why these sample sizes are sufficient?",
+          "compliance": "No",
+          "explanation": "The manuscript does not provide a specific sample-size calculation nor does it explain how the sample sizes were chosen or provide a rationale for why these sample sizes are sufficient.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:03:23.169000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "6.4",
+          "question": "For qualitative data, does the paper indicate whether data saturation was considered and describe the criteria used to decide that no further sampling was needed?",
+          "compliance": "n/a",
+          "explanation": "The manuscript is based on quantitative research and statistical analysis of data collected from Finnish primary and secondary school students. It does not involve qualitative data collection or analysis methods where data saturation would be a consideration.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:03:27.715000"
+        }
+      ]
+    },
+    {
+      "category": "Data collection",
+      "summary": "Details on data collection instruments provided, but lacks information on presence of others during data collection.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "1.1",
+          "question": "Does the paper provide details about the data collection procedure, including the instruments or devices used to record the data?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides detailed information about the data collection procedure, including the instruments used to record data on victimization, depressive symptoms, anxiety, and self-esteem.",
+          "quote": "Online questionnaires were administered during regular teaching hours. The administration was supervised by teachers who had been thoroughly instructed two weeks prior to the data collection. The participants were assured of the confidentiality of their answers and it was made clear to them that participation in the study was voluntary and that they could withdraw at any time.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:01:55.228000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "1.2",
+          "question": "Does the paper specify whether anyone other than the participant(s) and the researcher was present during data collection?",
+          "compliance": "No",
+          "explanation": "The manuscript does not specify whether anyone other than the participants and the researcher was present during data collection.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:02:00.519000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "1.3",
+          "question": "Does the paper state whether the researcher was blind to the experimental condition and/or the study hypothesis during data collection?",
+          "compliance": "n/a",
+          "explanation": "The manuscript does not discuss the blinding of researchers to experimental conditions or study hypotheses during data collection, which is typical for the type of longitudinal, observational study described.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:02:06.511000"
+        }
+      ]
+    },
+    {
+      "category": "Data exclusions",
+      "summary": "Exclusions detailed but lacks pre-established criteria.",
+      "severity": "medium",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "7.1",
+          "question": "Does the paper state whether any data were excluded from the analyses?",
+          "compliance": "Yes",
+          "explanation": "The manuscript explicitly states that data were excluded based on specific criteria, including the number of participating students per classroom and the participation rate at the first time point.",
+          "quote": "we selected classrooms with at least 10 participating students across waves, and with a participation rate of at least 40% at T1 (cf. Laninga-Wijnen et al., 2022), resulting in a sample of 3,470 students from 227 classrooms",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:03:34.881000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "7.2",
+          "question": "If data were excluded, does the paper provide the exact number of exclusions and the rationale behind them?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides details on the exclusion of data, including the exact number of exclusions and the rationale behind them.",
+          "quote": "Only students who received active parental consent and gave their assent (70.8%) were included in our analyses. In total, 4,522 students from grades 4 to 9 participated in at least one measurement wave across the school year. To ensure reliability and validity of the classroom-level variables, we selected classrooms with at least 10 participating students across waves, and with a participation rate of at least 40% at T1 (cf. Laninga-Wijnen et al., 2022), resulting in a sample of 3,470 students from 227 classrooms.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:03:43.728000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "7.3",
+          "question": "Does the paper indicate whether exclusion criteria were pre-established?",
+          "compliance": "No",
+          "explanation": "The manuscript does not explicitly mention pre-established exclusion criteria for the study participants or data.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:03:47.607000"
+        }
+      ]
+    },
+    {
+      "category": "Randomization",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "2.1",
+          "question": "Does the paper specify whether participants were allocated into experimental groups?",
+          "compliance": "n/a",
+          "explanation": "The study does not involve allocating participants into experimental groups but rather examines the associations between victimization, psychological adjustment, and classroom-level victimization in a longitudinal study.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:02:10.594000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "2.2",
+          "question": "If participants were allocated into groups, does the paper state whether allocation was random?",
+          "compliance": "n/a",
+          "explanation": "The study does not involve allocating participants into groups; it examines the associations between victimization and psychological adjustment in a longitudinal design without intervention or group allocation.",
+          "quote": "",
+          "section": "",
+          "created_at": "2025-02-07 18:02:14.844000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "2.3",
+          "question": "If allocation was not random, does the paper describe how covariates were controlled?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes the use of multilevel modeling to control for covariates such as gender and age, which is appropriate given the non-random allocation of participants.",
+          "quote": "All models were estimated for the three indicators of psychological adjustment (depressive symptoms, anxiety, and self-esteem) separately, controlling for gender and age, as there may be age and gender differences in internalizing symptoms (Cao & Yang, 2018; Kochel et al., 2012) as well as in victimization (Caravita & Cillessen, 2012; Smith et al., 2019).",
+          "section": "Analytic strategy",
+          "created_at": "2025-02-07 18:02:22.774000"
+        }
+      ]
+    },
+    {
+      "category": "Timing",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "4.1",
+          "question": "Does the paper indicate the start and stop dates of data collection?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides specific start and stop dates for the data collection period.",
+          "quote": "We used three waves of data collected in Finnish primary and secondary schools in one academic year (2020-2021): October (T1), January (T2), and April (T3).",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:02:28.293000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "4.2",
+          "question": "If there was a gap between collection periods, does the paper state the dates for each sample cohort?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the dates for each sample cohort within the study period.",
+          "quote": "We used three waves of data collected in Finnish primary and secondary schools in one academic year (2020-2021): October (T1), January (T2), and April (T3).",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:02:34.416000"
+        }
+      ]
+    },
+    {
+      "category": "Non-participation",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "5.1",
+          "question": "Does the paper specify how many participants dropped out or declined participation?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the number of participants who had complete data and implies the number of participants with incomplete data, which indirectly indicates the dropout or declined participation rate.",
+          "quote": "Across the three waves, 54.8% of the participants had complete data. The rest of the participants had data on at least one of the study variables in at least one wave.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:02:52.293000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "5.2",
+          "question": "Does the paper provide reasons for dropout or non-participation?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides reasons for dropout or non-participation, mentioning that the main reason for not higher participation was that many parents never returned the consent forms.",
+          "quote": "The main reason why the participation rate was not higher is that many parents never returned the consent forms and we used an active consent procedure.",
+          "section": "Strengths, limitations, and future directions",
+          "created_at": "2025-02-07 18:02:57.954000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "5.3",
+          "question": "Does the paper provide the response rate or explicitly state that no participants dropped out or declined participation?",
+          "compliance": "Yes",
+          "explanation": "The manuscript explicitly states the response rate for participant inclusion in the analyses.",
+          "quote": "Only students who received active parental consent and gave their assent (70.8%) were included in our analyses.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:03:06.902000"
+        }
+      ]
+    },
+    {
+      "category": "Research sample",
+      "summary": "No issues.",
+      "severity": "low",
+      "original_results": [
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "8.1",
+          "question": "Does the paper state the research sample (e.g. Harvard university undergraduates, villagers in rural India)?",
+          "compliance": "Yes",
+          "explanation": "The manuscript specifies the research sample, including the number of participants, their age range, gender distribution, and the educational level they belong to.",
+          "quote": "Across one school year, 3,470 Finnish 4th to 9th graders (Mage = 13.16, 46.1% boys) reported their victimization, depressive symptoms, anxiety, and self-esteem.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:03:53.824000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "8.2",
+          "question": "Does the paper provide relevant demographic information (e.g. age, sex) and indicate whether the sample is representative?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides relevant demographic information about the participants, including age, gender, and language spoken at home, and discusses the representativeness of the sample in terms of participation rate.",
+          "quote": "In total, 4,522 students from grades 4 to 9 participated in at least one measurement wave across the school year. To ensure reliability and validity of the classroom-level variables, we selected classrooms with at least 10 participating students across waves, and with a participation rate of at least 40% at T1 (cf. Laninga-Wijnen et al., 2022), resulting in a sample of 3,470 students from 227 classrooms (mean age at T1 = 13.16; SD = 1.80, range from 8 to 17 years). In total, 50.1% of the students identified as girls (1,739), 46.1% identified as boy, 0.9% identified as neither boy nor girl, and 2.9% preferred not to answer.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:04:06.362000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "8.3",
+          "question": "Does the paper provide a rationale for the study sample chosen?",
+          "compliance": "Yes",
+          "explanation": "The manuscript provides a rationale for the study sample chosen, explaining the focus on Finnish 4th to 9th graders to examine the associations between victimization and psychological adjustment in a longitudinal context.",
+          "quote": "Across one school year, 3,470 Finnish 4th to 9th graders (Mage = 13.16, 46.1% boys) reported their victimization, depressive symptoms, anxiety, and self-esteem.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:04:13.046000"
+        },
+        {
+          "doi": "10.1017/S0954579423001384",
+          "item_id": "8.4",
+          "question": "For studies using existing datasets, does the paper describe the dataset and its source?",
+          "compliance": "Yes",
+          "explanation": "The manuscript describes the dataset used for the study, including details about the sample size, the demographic information of the participants, and the timeframe of data collection.",
+          "quote": "We used three waves of data collected in Finnish primary and secondary schools in one academic year (2020\u20132021): October (T1), January (T2), and April (T3). Only students who received active parental consent and gave their assent (70.8%) were included in our analyses. In total, 4,522 students from grades 4 to 9 participated in at least one measurement wave across the school year.",
+          "section": "Sample and procedure",
+          "created_at": "2025-02-07 18:04:20.942000"
+        }
+      ]
+    }
+  ]
+}
