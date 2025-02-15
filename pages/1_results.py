@@ -205,7 +205,6 @@ def main():
         if st.session_state.current_manuscript:
             st.markdown('<h2 class="section-title">Detailed Review</h2>', unsafe_allow_html=True)
             compliance_analysis_page()
-            checklist_view_page(db_service)
         else:
             st.markdown("""
                 <div class="ai-insight">
