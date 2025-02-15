@@ -251,6 +251,26 @@ class DatabaseService:
             print(f"Error getting all feedback: {str(e)}")
             return []
 
+    def get_all_feedback_by_item(self) -> Dict[str, List[Feedback]]:
+        """Get all feedback grouped by item_id.
+        
+        Returns:
+            Dictionary where key is item_id and value is list of Feedback instances
+        """
+        try:
+            feedback_by_item = {}
+            # Get all feedback in a single query
+            cursor = self.feedback.find()
+            for feedback_dict in cursor:
+                feedback = Feedback.from_dict(feedback_dict)
+                if feedback.item_id not in feedback_by_item:
+                    feedback_by_item[feedback.item_id] = []
+                feedback_by_item[feedback.item_id].append(feedback)
+            return feedback_by_item
+        except Exception as e:
+            print(f"Error getting all feedback by item: {str(e)}")
+            return {}
+
     def save_summary(self, doi: str, overview: str, category_summaries: List[Dict[str, Any]]) -> None:
         """Save a compliance summary to database.
         

@@ -40,6 +40,37 @@ def format_compliance_status(status: str):
     }
     return f"<span style='color: {colors[status]}'>{status}</span>"
 
+def calculate_accuracy(results, feedback_list):
+    """Calculate accuracy of AI assessments based on user feedback.
+    
+    Args:
+        results: List of compliance results
+        feedback_list: List of feedback for the item
+        
+    Returns:
+        float: Accuracy percentage or None if no reviewed items
+    """
+    total_reviewed = 0
+    correct_assessments = 0
+    
+    # Create a map of feedback by DOI for faster lookup
+    feedback_by_doi = {f.doi: f for f in feedback_list}
+    
+    # Check each compliance result
+    for result in results:
+        feedback = feedback_by_doi.get(result.doi)
+        if not feedback or feedback.review_status == "skipped":
+            continue
+            
+        total_reviewed += 1
+        if feedback.review_status == "agreed":
+            correct_assessments += 1
+    
+    if total_reviewed == 0:
+        return None
+        
+    return (correct_assessments / total_reviewed) * 100
+
 def display_checklist_items(db_service: DatabaseService):
     """Display the checklist view."""
     st.markdown('<h2 class="section-title">Current checklist</h2>', unsafe_allow_html=True)
@@ -62,14 +93,19 @@ def display_checklist_items(db_service: DatabaseService):
     checklist_items = db_service.get_checklist_items()
     all_manuscripts = db_service.get_all_manuscripts()
     
-    # Get all compliance results for statistics
+    # Get all compliance results and feedback for statistics
     all_results = {}
+    
+    # Get all feedback in a single query
+    all_feedback = db_service.get_all_feedback_by_item()
+    
+    # Get all compliance results
     for manuscript in all_manuscripts:
         results = db_service.get_compliance_results(manuscript.doi)
         for result in results:
             if result.item_id not in all_results:
                 all_results[result.item_id] = []
-            all_results[result.item_id].append(result.compliance)
+            all_results[result.item_id].append(result)
     
     if checklist_items:
         # First group by category while maintaining order
@@ -106,21 +142,33 @@ def display_checklist_items(db_service: DatabaseService):
                 for item in sorted(grouped_items, key=lambda x: x.get('item_id', '')):
                     item_id = item.get('item_id', '')
                     compliances = all_results.get(item_id, [])
-                    total = len(compliances)
+                    total_results = len(compliances)
                     
-                    if total > 0:
-                        yes_count = compliances.count("Yes")
-                        no_count = compliances.count("No")
-                        partial_count = compliances.count("Partial")
-                        na_count = compliances.count("n/a")
+                    if total_results > 0:
+                        # Count compliance types
+                        compliances_dict = {"Yes": 0, "No": 0, "Partial": 0, "n/a": 0}
+                        for result in compliances:
+                            compliances_dict[result.compliance] += 1
                         
+                        # Calculate percentages
+                        yes_count = compliances_dict["Yes"]
+                        no_count = compliances_dict["No"]
+                        partial_count = compliances_dict["Partial"]
+                        na_count = compliances_dict["n/a"]
+                        
+                        # Calculate accuracy
+                        feedback_list = all_feedback.get(item_id, [])
+                        accuracy = calculate_accuracy(compliances, feedback_list)
+                        
+                        # Create table data
                         data.append({
                             "Item": item.get('question', ''),
-                            "Yes": f"{int(yes_count/total*100)}%",
-                            "No": f"{int(no_count/total*100)}%",
-                            "Partial": f"{int(partial_count/total*100)}%",
-                            "N/A": f"{int(na_count/total*100)}%",
-                            "Compliance": f"{calculate_compliance_score(compliances)}%"
+                            "Yes": f"{int(yes_count/total_results*100)}%",
+                            "No": f"{int(no_count/total_results*100)}%",
+                            "Partial": f"{int(partial_count/total_results*100)}%",
+                            "N/A": f"{int(na_count/total_results*100)}%",
+                            "Compliance": f"{calculate_compliance_score([r.compliance for r in compliances])}%",
+                            "Accuracy": f"{accuracy:.1f}%" if accuracy is not None else "N/A"
                         })
                 
                 if data:
@@ -133,18 +181,23 @@ def display_checklist_items(db_service: DatabaseService):
                         'padding': '8px'
                     })
                     
-                    # Color compliance scores
-                    def color_compliance(val):
-                        score = int(val.rstrip('%'))
-                        if score >= 80:
-                            color = '#2ecc71'  # Green
-                        elif score >= 50:
-                            color = '#f1c40f'  # Yellow
-                        else:
-                            color = '#e74c3c'  # Red
-                        return f'color: {color}; font-weight: bold'
+                    # Color compliance scores and accuracy
+                    def color_score(val):
+                        if val == "N/A":
+                            return 'color: #95a5a6; font-weight: bold'  # Gray
+                        try:
+                            score = float(val.rstrip('%'))
+                            if score >= 80:
+                                color = '#2ecc71'  # Green
+                            elif score >= 50:
+                                color = '#f39c12'  # Orange
+                            else:
+                                color = '#e74c3c'  # Red
+                            return f'color: {color}; font-weight: bold'
+                        except ValueError:
+                            return 'color: #95a5a6; font-weight: bold'  # Gray for non-numeric
                     
-                    styled_df = styled_df.map(color_compliance, subset=['Compliance'])
+                    styled_df = styled_df.map(color_score, subset=['Compliance', 'Accuracy'])
                     
                     # Display the table with column configuration
                     st.dataframe(
@@ -174,6 +227,11 @@ def display_checklist_items(db_service: DatabaseService):
                             "Compliance": st.column_config.TextColumn(
                                 "Compliance",
                                 width="extra-small"
+                            ),
+                            "Accuracy": st.column_config.TextColumn(
+                                "Accuracy",
+                                width="extra-small",
+                                help="Percentage of feedback ratings matching compliance results"
                             )
                         },
                         use_container_width=True,

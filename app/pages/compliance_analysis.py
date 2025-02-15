@@ -76,6 +76,97 @@ def create_summary_chart(results: List[Dict[str, Any]]) -> go.Figure:
     
     return fig
 
+def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
+    """Display the feedback UI for a compliance result."""
+    # Get existing feedback
+    if existing_feedback is None:
+        existing_feedback = db_service.get_feedback(manuscript.doi, result["item_id"])
+    
+    # If no feedback exists or user wants to change
+    if not existing_feedback or st.session_state.get(f"change_feedback_{result['item_id']}", False):
+        comments = st.text_area(
+            "Comments (optional)",
+            value=existing_feedback.comments if existing_feedback else "",
+            key=f"comments_{result['item_id']}"
+        )
+        
+        # Show rating options
+        st.markdown("**If you disagree, please provide your rating:**")
+        rating = st.radio(
+            "",  # Empty label since we use markdown above
+            ["Yes", "No", "Partial", "N/A"],
+            key=f"rating_{result['item_id']}",
+            index=None  # No default selection
+        )
+        
+        # Action buttons
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("✅ Agree", key=f"agree_{result['item_id']}"):
+                feedback = Feedback(
+                    doi=manuscript.doi,
+                    item_id=result["item_id"],
+                    review_status="agreed",
+                    comments=comments
+                )
+                db_service.save_feedback(feedback)
+                st.session_state[f"change_feedback_{result['item_id']}"] = False
+                st.rerun()
+                
+        with col2:
+            if st.button("❌ Disagree", key=f"disagree_{result['item_id']}"):
+                if not rating:
+                    st.error("Please select your rating before disagreeing")
+                else:
+                    feedback = Feedback(
+                        doi=manuscript.doi,
+                        item_id=result["item_id"],
+                        rating=rating,
+                        review_status="disagreed",
+                        comments=comments
+                    )
+                    db_service.save_feedback(feedback)
+                    st.session_state[f"change_feedback_{result['item_id']}"] = False
+                    st.rerun()
+                
+        with col3:
+            if st.button("❓ Unsure", key=f"unsure_{result['item_id']}"):
+                feedback = Feedback(
+                    doi=manuscript.doi,
+                    item_id=result["item_id"],
+                    review_status="unsure",
+                    comments=comments
+                )
+                db_service.save_feedback(feedback)
+                st.session_state[f"change_feedback_{result['item_id']}"] = False
+                st.rerun()
+    
+    # Show existing feedback
+    else:
+        status_colors = {
+            "agreed": "🟢",
+            "disagreed": "🔴",
+            "unsure": "⚫️"
+        }
+        
+        if existing_feedback.review_status == "agreed":
+            st.markdown("✅ You agreed")
+        
+        elif existing_feedback.review_status == "disagreed":
+            st.markdown(f"❌ Disagreed: {format_compliance_status(existing_feedback.rating)}")
+        
+        else:  # unsure
+            st.markdown("❓ Unsure")
+            
+        # Show comments if any
+        if existing_feedback.comments:
+            st.markdown(f"_Comments: {existing_feedback.comments}_")
+        
+        if st.button("Change", key=f"change_{result['item_id']}"):
+            st.session_state[f"change_feedback_{result['item_id']}"] = True
+            st.rerun()
+
 def display_compliance_results(results: List[Dict[str, Any]], checklist_items: List[Dict[str, Any]], manuscript):
     """Display compliance results in an interactive table."""
     if not results:
@@ -100,6 +191,12 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
     
     # Create a lookup for checklist items
     checklist_lookup = {item["item_id"]: item for item in checklist_items}
+    
+    # Get all feedback for this manuscript
+    manuscript_feedback = {
+        feedback.item_id: feedback 
+        for feedback in st.session_state.db_service.get_all_feedback(manuscript.doi)
+    }
     
     # Calculate compliance score
     compliance_score = calculate_compliance_score(results_data)
@@ -145,83 +242,9 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
             if result['section']:
                 st.markdown(f"**Section Found:** {result['section']}")
             
-            # Get existing feedback
-            feedback = st.session_state.db_service.get_feedback(manuscript.doi, result['item_id'])
-            
-            # Feedback section
-            st.divider()
-            st.write("**Your Feedback**")
-            
-            # Feedback buttons in columns
-            cols = st.columns(4)
-            selected_rating = None
-            
-            # Define feedback options with their colors
-            feedback_options = [
-                ("Yes", "#2ecc71"),  # Green
-                ("No", "#e74c3c"),  # Red
-                ("Partial", "#f39c12"),  # Orange
-                ("N/A", "#95a5a6")  # Gray
-            ]
-            
-            for i, (rating, color) in enumerate(feedback_options):
-                with cols[i]:
-                    button_style = f"""
-                        <style>
-                            div[data-testid="stButton"] button {{
-                                background-color: {color if feedback and feedback.rating == rating else 'white'};
-                                color: {color if feedback and feedback.rating != rating else 'black'};
-                                border: 1px solid {color};
-                                width: 100%;
-                            }}
-                            div[data-testid="stButton"] button:hover {{
-                                background-color: {color};
-                                color: white;
-                                border: 1px solid {color};
-                            }}
-                        </style>
-                    """
-                    st.markdown(button_style, unsafe_allow_html=True)
-                    if st.button(
-                        rating,
-                        key=f"btn_{result['item_id']}_{rating}",
-                        use_container_width=True
-                    ):
-                        selected_rating = rating
-            
-            # Comments field and submit button in columns
-            comment_col, button_col = st.columns([3, 1])
-            with comment_col:
-                comments = st.text_area(
-                    "Comments",
-                    value=feedback.comments if feedback else "",
-                    key=f"comments_{result['item_id']}",
-                    placeholder="Add your comments here..."
-                )
-            
-            with button_col:
-                submit_clicked = st.button(
-                    "Submit Feedback",
-                    key=f"submit_{result['item_id']}",
-                    type="primary",
-                    use_container_width=True
-                )
-            
-            # Save feedback if rating changed or submit clicked
-            if selected_rating or submit_clicked:
-                if not selected_rating and not feedback:
-                    st.warning("Please select a rating before submitting feedback.")
-                else:
-                    new_feedback = Feedback(
-                        doi=manuscript.doi,
-                        item_id=result['item_id'],
-                        rating=selected_rating or (feedback.rating if feedback else None),
-                        comments=comments
-                    )
-                    if st.session_state.db_service.save_feedback(new_feedback):
-                        st.success("Feedback saved!")
-                    else:
-                        st.error("Error saving feedback")
+            # Add feedback UI
+            st.markdown("**Review & Feedback**")
+            display_feedback_ui(st.session_state.db_service, result, manuscript, manuscript_feedback.get(result['item_id']))
 
 def compliance_analysis_page():
     """Main compliance analysis page."""
