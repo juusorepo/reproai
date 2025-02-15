@@ -91,9 +91,8 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
         )
         
         # Show rating options
-        st.markdown("**If you disagree, please provide your rating:**")
         rating = st.radio(
-            "",  # Empty label since we use markdown above
+            "If you disagree, please provide your rating",
             ["Yes", "No", "Partial", "N/A"],
             key=f"rating_{result['item_id']}",
             index=None  # No default selection
@@ -101,20 +100,8 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
         
         # Action buttons
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
-            if st.button("✅ Agree", key=f"agree_{result['item_id']}"):
-                feedback = Feedback(
-                    doi=manuscript.doi,
-                    item_id=result["item_id"],
-                    review_status="agreed",
-                    comments=comments
-                )
-                db_service.save_feedback(feedback)
-                st.session_state[f"change_feedback_{result['item_id']}"] = False
-                st.rerun()
-                
-        with col2:
             if st.button("❌ Disagree", key=f"disagree_{result['item_id']}"):
                 if not rating:
                     st.error("Please select your rating before disagreeing")
@@ -129,7 +116,20 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
                     db_service.save_feedback(feedback)
                     st.session_state[f"change_feedback_{result['item_id']}"] = False
                     st.rerun()
-                
+
+        
+        with col2:
+            if st.button("✅ Agree", key=f"agree_{result['item_id']}"):
+                feedback = Feedback(
+                    doi=manuscript.doi,
+                    item_id=result["item_id"],
+                    review_status="agreed",
+                    comments=comments
+                )
+                db_service.save_feedback(feedback)
+                st.session_state[f"change_feedback_{result['item_id']}"] = False
+                st.rerun()
+                               
         with col3:
             if st.button("❓ Unsure", key=f"unsure_{result['item_id']}"):
                 feedback = Feedback(
@@ -144,24 +144,19 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
     
     # Show existing feedback
     else:
-        status_colors = {
-            "agreed": "🟢",
-            "disagreed": "🔴",
-            "unsure": "⚫️"
-        }
         
         if existing_feedback.review_status == "agreed":
             st.markdown("✅ You agreed")
         
         elif existing_feedback.review_status == "disagreed":
-            st.markdown(f"❌ Disagreed: {format_compliance_status(existing_feedback.rating)}")
+            st.markdown(f"❌ You disagreed: {format_compliance_status(existing_feedback.rating)}")
         
         else:  # unsure
-            st.markdown("❓ Unsure")
+            st.markdown("❓ You're unsure")
             
         # Show comments if any
         if existing_feedback.comments:
-            st.markdown(f"_Comments: {existing_feedback.comments}_")
+            st.markdown(f"_Comment: {existing_feedback.comments}_")
         
         if st.button("Change", key=f"change_{result['item_id']}"):
             st.session_state[f"change_feedback_{result['item_id']}"] = True
@@ -230,21 +225,108 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
     
     st.markdown("---")
     
-    # Display results with feedback options
+    # Group results by category
+    results_by_category = {}
     for result in results_data:
-        with st.expander(f"Item {result['item_id']}: {result['question']}", expanded=False):
-            # Display result
-            st.markdown(f"**Status:** {format_compliance_status(result['compliance'])}")
-            if result['explanation']:
-                st.markdown(f"**Explanation:** {result['explanation']}")
-            if result['quote']:
-                st.markdown(f"**Quote:** _{result['quote']}_")
-            if result['section']:
-                st.markdown(f"**Section Found:** {result['section']}")
-            
-            # Add feedback UI
-            st.markdown("**Review & Feedback**")
-            display_feedback_ui(st.session_state.db_service, result, manuscript, manuscript_feedback.get(result['item_id']))
+        item = checklist_lookup.get(result['item_id'])
+        if item:
+            category = item.get('category', 'Uncategorized')
+            if category not in results_by_category:
+                results_by_category[category] = []
+            results_by_category[category].append(result)
+    
+    # Get severity from summary if available
+    summary = st.session_state.db_service.get_summary(manuscript.doi)
+    category_severity = {}
+    if summary:
+        for cat in summary.get('category_summaries', []):
+            category_severity[cat['category']] = cat['severity'].upper()
+    
+    # Define severity indicators and order
+    severity_colors = {
+        'HIGH': '🔴',
+        'MEDIUM': '🟡',
+        'LOW': '🟢',
+        'UNKNOWN': '⚪️'
+    }
+    severity_order = {
+        'HIGH': 0,
+        'MEDIUM': 1,
+        'LOW': 2,
+        'UNKNOWN': 3
+    }
+    
+    # Sort categories by severity
+    sorted_categories = sorted(
+        results_by_category.keys(),
+        key=lambda x: severity_order.get(category_severity.get(x, 'UNKNOWN'), 4)
+    )
+    
+    # Display results by category
+    for category in sorted_categories:
+        severity = category_severity.get(category, 'UNKNOWN')
+        severity_indicator = severity_colors.get(severity, '⚪️')
+        category_results = results_by_category[category]
+        
+        # Count feedback statuses for this category
+        category_feedback = {
+            "agreed": "✅",
+            "disagreed": "❌",
+            "unsure": "❓"
+        }
+        feedback_counts = {status: 0 for status in category_feedback.keys()}
+        
+        for result in category_results:
+            feedback = manuscript_feedback.get(result['item_id'])
+            if feedback:
+                feedback_counts[feedback.review_status] += 1
+        
+        # Create feedback status string with repeated icons
+        feedback_status = "".join([
+            icon * count for status, (icon, count) in 
+            ((s, (i, feedback_counts[s])) for s, i in category_feedback.items())
+            if count > 0
+        ])
+        
+        # Create category expander with count and feedback status
+        with st.expander(f"{severity_indicator} {category} ({len(category_results)} items) {feedback_status}", expanded=False):
+            # Display results in this category
+            for result in category_results:
+                # Get feedback status for this item
+                feedback = manuscript_feedback.get(result['item_id'])
+                feedback_icon = ""
+                if feedback:
+                    if feedback.review_status == "agreed":
+                        feedback_icon = "✅ "
+                    elif feedback.review_status == "disagreed":
+                        feedback_icon = "❌ "
+                    else:  # unsure
+                        feedback_icon = "❓ "
+                
+                # Show item header without compliance status
+                st.markdown(f"#### {result['item_id']}: {result['question']}")
+                
+                # Create two columns
+                col1, col2 = st.columns(2)
+                
+                # Left column: AI Analysis
+                with col1:
+                    st.markdown("##### AI Analysis")
+                    st.markdown(f"**Status:** {format_compliance_status(result['compliance'])}")
+                    if result['explanation']:
+                        st.markdown(f"**Explanation:** {result['explanation']}")
+                    if result['quote']:
+                        st.markdown(f"**Quote:** _{result['quote']}_")
+                    if result['section']:
+                        st.markdown(f"**Section in text:** {result['section']}")
+                
+                # Right column: Review & Feedback
+                with col2:
+                    st.markdown("##### Review & Feedback")
+                    display_feedback_ui(st.session_state.db_service, result, manuscript, manuscript_feedback.get(result['item_id']))
+                
+                # Add separator between items
+                st.markdown("---")
 
 def compliance_analysis_page():
     """Main compliance analysis page."""
