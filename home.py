@@ -29,10 +29,8 @@ from app.services.summarize_service import SummarizeService
 from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.feedback import Feedback
-import json
 from datetime import datetime
 import tempfile
-import pandas as pd
 
 # Load custom CSS
 with open('static/styles.css') as f:
@@ -49,146 +47,78 @@ metadata_extractor = MetadataExtractor(api_key)
 compliance_analyzer = ComplianceAnalyzer(api_key, db_service)
 summarize_service = SummarizeService(api_key, db_service)
 
-# Initialize session state
-if 'current_manuscript' not in st.session_state:
-    st.session_state.current_manuscript = None
-if 'logs' not in st.session_state:
-    st.session_state.logs = []
-if 'db_service' not in st.session_state:
-    st.session_state.db_service = db_service
-
-def add_log(message: str):
-    """Add a timestamped log message to session state and display it."""
-    if 'logs' not in st.session_state:
-        st.session_state.logs = []
-    timestamp = datetime.now().strftime("%H:%M:%S")
-    log_message = f"[{timestamp}] {message}"
-    st.session_state.logs.append(log_message)
-    
-    # Update the log display
-    if 'log_placeholder' in st.session_state:
-        with st.session_state.log_placeholder:
-            st.empty()  # Clear previous content
-            for log in st.session_state.logs:
-                st.markdown(f"```\n{log}\n```")
-
-def display_logs():
-    """Display all log messages."""
-    if 'logs' in st.session_state and st.session_state.logs:
-        for log in st.session_state.logs:
-            st.markdown(f"```\n{log}\n```")
-
-def get_error_details(e: Exception) -> str:
-    """Get detailed error information."""
-    error_type = type(e).__name__
-    error_msg = str(e)
-    if hasattr(e, 'response'):
-        if hasattr(e.response, 'text'):
-            error_msg += f"\nResponse: {e.response.text}"
-    return f"{error_type}: {error_msg}"
-
 def process_uploaded_file(uploaded_file):
     """Process uploaded PDF file."""
     try:
-        # Create temp file
+        # Create temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
             tmp_file.write(uploaded_file.getvalue())
-            pdf_path = tmp_file.name
+            tmp_file_path = tmp_file.name
 
-        add_log("Starting manuscript processing...")
-        
         # Extract text from PDF
         pdf_extractor = PDFExtractor()
-        text_content = pdf_extractor.extract_text(pdf_path)
-        if not text_content:
-            st.error("Could not extract text from PDF. Please ensure the file is not corrupted or password-protected.")
-            return
-        add_log("Text extracted from PDF")
+        text = pdf_extractor.extract_text(tmp_file_path)
         
+        if not text:
+            st.error("Could not extract text from the PDF. Please ensure the file is not corrupted or password protected.")
+            return None
+
         # Extract metadata
-        metadata = metadata_extractor.extract_metadata(text_content)
+        metadata = metadata_extractor.extract_metadata(text)
         if not metadata:
-            st.error("Could not extract metadata from manuscript. Please ensure the file contains standard manuscript sections.")
-            return
-        add_log("Metadata extracted")
-        
-        # Check if analysis exists for this DOI
-        doi = metadata.get('doi', '')
-        if doi:
-            existing_results = db_service.get_compliance_results(doi)
-            existing_summary = db_service.get_summary(doi)
-            
-            if existing_results and existing_summary:
-                st.info(f"An existing analysis was found for DOI: {doi}")
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("View Previous Results", use_container_width=True):
-                        st.session_state.current_doi = doi
-                        st.switch_page("pages/results.py")
-                        return
-                with col2:
-                    reanalyze = st.button("Re-analyze Manuscript", use_container_width=True)
-                    if not reanalyze:
-                        return
-                    add_log("Starting re-analysis...")
-        
+            st.error("Could not extract metadata from the manuscript.")
+            return None
+
         # Create manuscript object
         manuscript = Manuscript(
-            doi=metadata.get('doi', ''),
-            title=metadata.get('title', ''),
+            title=metadata.get('title', 'Unknown Title'),
             authors=metadata.get('authors', []),
+            doi=metadata.get('doi', ''),
             abstract=metadata.get('abstract', ''),
-            design=metadata.get('design', ''),
-            email=metadata.get('email', ''),
-            text=text_content
+            text=text,
+            processed_at=datetime.now()
         )
-        
+
         # Save manuscript to database
         db_service.save_manuscript(manuscript)
-        add_log("Manuscript saved to database")
-        
-        # Analyze compliance
+
+        # Run compliance analysis
         checklist_items = db_service.get_checklist_items()
-        results = compliance_analyzer.analyze_manuscript(manuscript, manuscript.text, checklist_items)
+        results = compliance_analyzer.analyze_manuscript(
+            manuscript=manuscript,
+            text=text,
+            checklist_items=checklist_items
+        )
         if not results:
-            st.error("Could not analyze manuscript compliance. Please try again later.")
-            return
-        add_log(f"Compliance analysis complete: {len(results)} items checked")
-        
+            st.error("Could not analyze manuscript compliance.")
+            return None
+
         # Save results to database
-        db_service.save_compliance_results(results, manuscript.doi)
-        add_log("Compliance results saved to database")
-        
+        for result in results:
+            db_service.save_compliance_result(doi=manuscript.doi, result=result)
+
         # Generate and save summary
         overview, category_summaries = summarize_service.summarize_results(results)
         if overview and category_summaries:
-            db_service.save_summary(manuscript.doi, overview, category_summaries)
-            add_log("Summary generated and saved")
+            db_service.save_summary(
+                doi=manuscript.doi,
+                overview=overview,
+                category_summaries=category_summaries
+            )
         else:
-            add_log("Warning: Could not generate summary")
-            
-        # Store DOI in session state for other pages
-        st.session_state.current_doi = manuscript.doi
-        
-        # Success message and redirect
-        st.success("Analysis complete! View the results in the Results tab.")
-        st.switch_page("pages/results.py")
-        
+            st.warning("Could not generate complete summary. Some information may be missing.")
+
+        # Store current manuscript in session state
+        st.session_state.current_manuscript = manuscript
+
+        # Clean up temporary file
+        os.unlink(tmp_file_path)
+
+        return manuscript
+
     except Exception as e:
-        error_details = get_error_details(e)
-        st.error(f"Error processing manuscript: {error_details}")
-        add_log(f"ERROR: {error_details}")
-        # Print full stack trace for debugging
-        import traceback
-        print("Full error:", traceback.format_exc())
-    
-    finally:
-        # Clean up temp file
-        if 'pdf_path' in locals():
-            try:
-                os.remove(pdf_path)
-            except:
-                pass
+        st.error(f"Error processing file: {str(e)}")
+        return None
 
 def main():
     """Main app function."""
@@ -205,18 +135,15 @@ def main():
         st.markdown("Please enter your email address to continue:")
         email = st.text_input("Email address")
         
-        if st.button("Continue"):
-            try:
-                if email:
-                    # Validate and save user
-                    db_service.save_user(email)
-                    st.session_state.user_email = email
-                    st.success("Email verified successfully!")
-                    st.experimental_rerun()
-                else:
-                    st.error("Please enter your email address")
-            except ValueError as e:
-                st.error(str(e))
+        if email:
+            # Validate email
+            if db_service._validate_email(email):
+                # Save user to database
+                db_service.save_user(email)
+                st.session_state.user_email = email
+                st.experimental_rerun()
+            else:
+                st.error("Please enter a valid email address.")
         return
     
     # Show current user
@@ -228,7 +155,16 @@ def main():
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
     
     if uploaded_file:
-        process_uploaded_file(uploaded_file)
+        # Check if this file has already been processed in this session
+        file_key = f"processed_{uploaded_file.name}"
+        if file_key not in st.session_state:
+            with st.spinner('Processing manuscript...'):
+                manuscript = process_uploaded_file(uploaded_file)
+                if manuscript:
+                    st.session_state[file_key] = True
+                    st.success("Manuscript processed successfully! You can now view the results in the Results page.")
+        else:
+            st.info("This file has already been processed. You can view the results in the Results page.")
 
 if __name__ == "__main__":
     main()

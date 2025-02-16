@@ -93,15 +93,19 @@ class SummarizeService:
               - original_results: List of original compliance results for the category
         """
         try:
-            if not results:
-                return "", []
-                
             # Get checklist items for categories
             checklist_items = self.db_service.get_checklist_items()
-            
-            # Format results for prompts
+            if not checklist_items:
+                print("Error: No checklist items found")
+                return "", []
+
+            # Format results and get category mapping
             formatted_results, results_by_category = self._format_results_for_prompt(results, checklist_items)
             
+            if not formatted_results or not results_by_category:
+                print("Error: Could not format results")
+                return "", []
+
             # Generate overview summary
             overview_prompt = self.overview_template.format(
                 results=formatted_results,
@@ -178,7 +182,7 @@ class SummarizeService:
                 return overview, category_summaries
                     
             except (json.JSONDecodeError, ValueError) as e:
-                print(f"Error: {str(e)}")
+                print(f"Error parsing JSON: {str(e)}")
                 category_summaries = []
                 for category, category_results in results_by_category.items():
                     severity = 'high' if any(r.get('compliance') == 'No' for r in category_results) \
