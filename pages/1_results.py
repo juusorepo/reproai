@@ -14,7 +14,7 @@ import streamlit as st
 
 # Page configuration - Must be the first Streamlit command
 st.set_page_config(
-    page_title="ReproAI Analyzer",
+    page_title="Analysis results",
     page_icon="",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -87,7 +87,7 @@ def get_error_details(e: Exception) -> str:
 
 def display_manuscript_selector():
     """Display a list of analyzed manuscripts and allow selection."""
-    st.markdown('<h2 class="section-title"> Select manuscript </h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title"> Current manuscript </h2>', unsafe_allow_html=True)
     
     # Get list of analyzed manuscripts
     manuscripts = db_service.get_all_manuscripts()
@@ -105,7 +105,7 @@ def display_manuscript_selector():
     
     # Display current selection at the top
     if st.session_state.current_manuscript:
-        st.success(f"Current manuscript: {st.session_state.current_manuscript.title}")
+        st.success(f"📖: {st.session_state.current_manuscript.title}")
        
     
     # Initialize index based on current selection
@@ -117,7 +117,7 @@ def display_manuscript_selector():
             current_index = 0
     
     st.write("---")
-    st.markdown(f'<h2 class="section-title"> Analysed manuscripts ({len(manuscripts)}) </h2>', unsafe_allow_html=True)
+    st.markdown(f'<h2 class="section-title"> Select manuscript ({len(manuscripts)} analyzed) </h2>', unsafe_allow_html=True)
     
     # Filtering options in an expander
     with st.expander("🔍 Filter manuscripts", expanded=False):
@@ -166,23 +166,29 @@ def display_manuscript_selector():
     return None
 
 def main():
-    """Main app function."""
+    """Main function for the results page."""
+    # Initialize session state for user email if not exists
+    if 'user_email' not in st.session_state:
+        st.error("Please enter your email on the home page first.")
+        st.stop()
+        
+    # Initialize database service if not exists
+    if 'db_service' not in st.session_state:
+        st.session_state.db_service = DatabaseService(st.secrets["MONGODB_URI"])
+    
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <h1>Analysis Results</h1>
         </div>
     """, unsafe_allow_html=True)
     
-    # Initialize database service
-    db_service = DatabaseService(st.secrets["MONGODB_URI"])
-    
     # Initialize active tab in session state if not present
     if 'active_tab' not in st.session_state:
         st.session_state.active_tab = "Select manuscript"
     
     # Create tabs for different views
-    tabs = ["Select manuscript", "Results", "Detailed Review"]
-    tab1, tab2, tab3 = st.tabs(tabs)
+    tabs = ["Select manuscript", "View Results"]
+    tab1, tab2 = st.tabs(tabs)
     
     # Set active tab if changed
     active_tab_index = tabs.index(st.session_state.active_tab)
@@ -193,22 +199,11 @@ def main():
     with tab2:
         if st.session_state.current_manuscript:
             st.markdown('<h2 class="section-title">Analysis Results</h2>', unsafe_allow_html=True)
-            summary_view_page()
-        else:
-            st.markdown("""
-                <div class="ai-insight">
-                    Please select a manuscript first to view analysis results.
-                </div>
-            """, unsafe_allow_html=True)
-    
-    with tab3:
-        if st.session_state.current_manuscript:
-            st.markdown('<h2 class="section-title">Detailed Review</h2>', unsafe_allow_html=True)
             compliance_analysis_page()
         else:
             st.markdown("""
                 <div class="ai-insight">
-                    Please select a manuscript first to view detailed review.
+                    Please select a manuscript first to view analysis results.
                 </div>
             """, unsafe_allow_html=True)
 

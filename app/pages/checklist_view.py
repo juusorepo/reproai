@@ -1,5 +1,6 @@
 """Checklist view page."""
 import streamlit as st
+import pandas as pd
 from app.services.db_service import DatabaseService
 
 def checklist_view_page(db_service: DatabaseService):
@@ -10,6 +11,35 @@ def checklist_view_page(db_service: DatabaseService):
     st.markdown("Source: [www.nature.com/documents/nr-reporting-summary.pdf](https://www.nature.com/documents/nr-reporting-summary.pdf)")
     st.write("---")
     st.markdown("Original guidance is shown in italics. That is split to items for AI-assisted analysis.")
+    
+    # Add custom table styling
+    st.markdown(
+        """
+        <style>
+        .custom-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+        .custom-table td:first-child {
+            width: 30%;
+            white-space: nowrap;
+            text-align: left !important;
+            padding-right: 15px;
+        }
+        .custom-table td:nth-child(2) {
+            width: 70%;
+        }
+        .custom-table th {
+            text-align: left !important;
+        }
+        .custom-table td {
+            word-wrap: break-word;
+            vertical-align: top;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     
     # Get checklist items from database
     checklist_items = db_service.get_checklist_items()
@@ -43,9 +73,19 @@ def checklist_view_page(db_service: DatabaseService):
                 st.markdown(f"*{original}*")
                 st.write("")  # Add some spacing
                 
-                # Then list all questions related to this original text
+                # Create DataFrame for the grouped items
+                data = []
                 for item in sorted(grouped_items, key=lambda x: x.get('item_id', '')):
-                    st.markdown(f"**{item.get('item_id', '')}. {item.get('question', '')}**")
+                    data.append({
+                        'Item': f"{item.get('item_id', '')}. {item.get('question', '')}",
+                        'Description': item.get('description', '') if item.get('description', '') else ''
+                    })
+                
+                df = pd.DataFrame(data)
+                
+                # Convert DataFrame to HTML with the custom class
+                html = df.to_html(classes=['custom-table', 'dataframe'], index=False, escape=False)
+                st.markdown(html, unsafe_allow_html=True)
                 
                 st.write("---")  # Separator between groups
     else:

@@ -145,12 +145,12 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
     """Display the feedback UI for a compliance result."""
     # Get existing feedback
     if existing_feedback is None:
-        existing_feedback = db_service.get_feedback(manuscript.doi, result["item_id"])
+        existing_feedback = db_service.get_feedback(manuscript.doi, result["item_id"], user_email=st.session_state.user_email)
     
     # If no feedback exists or user wants to change
     if not existing_feedback or st.session_state.get(f"change_feedback_{result['item_id']}", False):
         comments = st.text_area(
-            "Comments (optional)",
+            "Your explanation (optional)",
             value=existing_feedback.comments if existing_feedback else "",
             key=f"comments_{result['item_id']}"
         )
@@ -167,7 +167,7 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.button("❌ Disagree", key=f"disagree_{result['item_id']}"):
+            if st.button("❌ Disagree with AI", key=f"disagree_{result['item_id']}"):
                 if not rating:
                     st.error("Please select your rating before disagreeing")
                 else:
@@ -176,7 +176,8 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
                         item_id=result["item_id"],
                         rating=rating,
                         review_status="disagreed",
-                        comments=comments
+                        comments=comments,
+                        user_email=st.session_state.user_email
                     )
                     db_service.save_feedback(feedback)
                     st.session_state[f"change_feedback_{result['item_id']}"] = False
@@ -189,7 +190,8 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
                     doi=manuscript.doi,
                     item_id=result["item_id"],
                     review_status="agreed",
-                    comments=comments
+                    comments=comments,
+                    user_email=st.session_state.user_email
                 )
                 db_service.save_feedback(feedback)
                 st.session_state[f"change_feedback_{result['item_id']}"] = False
@@ -201,7 +203,8 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
                     doi=manuscript.doi,
                     item_id=result["item_id"],
                     review_status="unsure",
-                    comments=comments
+                    comments=comments,
+                    user_email=st.session_state.user_email
                 )
                 db_service.save_feedback(feedback)
                 st.session_state[f"change_feedback_{result['item_id']}"] = False
@@ -252,10 +255,11 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
     # Create a lookup for checklist items
     checklist_lookup = {item["item_id"]: item for item in checklist_items}
     
-    # Get all feedback for this manuscript
+    # Get all feedback for this manuscript and user
+    user_email = st.session_state.get("user_email")
     manuscript_feedback = {
         feedback.item_id: feedback 
-        for feedback in st.session_state.db_service.get_all_feedback(manuscript.doi)
+        for feedback in st.session_state.db_service.get_all_feedback(manuscript.doi, user_email=user_email)
     }
     
     # Group results by category
@@ -339,9 +343,9 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
                     if result['section']:
                         st.markdown(f"**Section in text:** {result['section']}")
                 
-                # Right column: Review & Feedback
+                # Right column: Feedback
                 with col2:
-                    st.markdown("##### Review & Feedback")
+                    st.markdown("##### Your feedback")
                     display_feedback_ui(st.session_state.db_service, result, manuscript, manuscript_feedback.get(result['item_id']))
                 
                 # Add separator between items
@@ -350,6 +354,11 @@ def display_compliance_results(results: List[Dict[str, Any]], checklist_items: L
 
 def compliance_analysis_page():
     """Main compliance analysis page."""
+    
+    # Validate user email
+    if 'user_email' not in st.session_state:
+        st.error("Please enter your email on the home page first.")
+        st.stop()
     
     # Get current manuscript
     manuscript = st.session_state.get("current_manuscript")
@@ -499,7 +508,8 @@ def compliance_analysis_page():
                     review_status="agreed",
                     rating=None,
                     comments="",
-                    created_at=datetime.now()
+                    created_at=datetime.now(),
+                    user_email=st.session_state.user_email
                 )
                 new_feedback.append(feedback)
         

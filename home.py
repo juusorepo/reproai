@@ -192,51 +192,43 @@ def process_uploaded_file(uploaded_file):
 
 def main():
     """Main app function."""
-    # Sidebar
-    st.sidebar.title("Instructions")
-    st.sidebar.write("This tool assesses scientific manuscripts against reporting standards.")
+    st.title("ReproAI Analyzer")
+    st.markdown("Enhancing reproducibility with AI-assisted analysis.")
     
-    # Main content
-    st.markdown("""
-        <div style="text-align: left;">
-            <h1 class="custom-title">ReproAI Analyzer</h1>
-        </div>
-    """, unsafe_allow_html=True)
+    # Initialize session state for user email if not exists
+    if 'user_email' not in st.session_state:
+        st.session_state.user_email = None
     
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown('<h2 class="section-title">Version 0.1 / February 2025</h2>', unsafe_allow_html=True)
-        st.markdown("""          
-            Get started by uploading a manuscript in PDF format or viewing previous results.
-        """)
+    # Email input section
+    if not st.session_state.user_email:
+        st.markdown("### Sign in")
+        st.markdown("Please enter your email address to continue:")
+        email = st.text_input("Email address")
         
-        uploaded_file = st.file_uploader(
-            "Choose a PDF file",
-            type=['pdf'],
-            help="Upload a scientific manuscript in PDF format",
-            key="manuscript_uploader"
-        )
-        
-        if uploaded_file:
-            st.markdown(f"""
-                <div class="uploadedFile">
-                    <span class="status-success">✓</span> Selected file: {uploaded_file.name}
-                </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown('<div class="primary-button">', unsafe_allow_html=True)
-            if st.button("Start Processing", use_container_width=True):
-                # Create the log container before processing
-                st.markdown("---")
-                st.markdown("### Analysis Progress")
-                # Create a placeholder for logs that can be updated
-                st.session_state.log_placeholder = st.empty()
-                process_uploaded_file(uploaded_file)
-            st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("Continue"):
+            try:
+                if email:
+                    # Validate and save user
+                    db_service.save_user(email)
+                    st.session_state.user_email = email
+                    st.success("Email verified successfully!")
+                    st.experimental_rerun()
+                else:
+                    st.error("Please enter your email address")
+            except ValueError as e:
+                st.error(str(e))
+        return
     
-    with col2:
-        ""
+    # Show current user
+    st.sidebar.markdown(f"**User:** {st.session_state.user_email}")
+    
+    # Rest of the main function
+    st.markdown("Upload a manuscript (PDF) for analysis or view previous results.")
+    
+    uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+    
+    if uploaded_file:
+        process_uploaded_file(uploaded_file)
 
 if __name__ == "__main__":
     main()

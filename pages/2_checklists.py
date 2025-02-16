@@ -168,18 +168,31 @@ def display_checklist_items(db_service: DatabaseService):
                             "Partial": f"{int(partial_count/total_results*100)}%",
                             "N/A": f"{int(na_count/total_results*100)}%",
                             "Compliance": f"{calculate_compliance_score([r.compliance for r in compliances])}%",
-                            "Accuracy": f"{accuracy:.1f}%" if accuracy is not None else "N/A"
+                            "Accuracy": f"{int(accuracy)}%" if accuracy is not None else "N/A"
                         })
                 
                 if data:
                     df = pd.DataFrame(data)
+                    
+                    # Hide index column with CSS
+                    hide_table_row_index = """
+                        <style>
+                        thead tr th:first-child {display:none}
+                        tbody th {display:none}
+                        </style>
+                    """
+                    st.markdown(hide_table_row_index, unsafe_allow_html=True)
                     
                     # Style the table
                     styled_df = df.style.set_properties(**{
                         'text-align': 'left',
                         'font-size': '0.9em',
                         'padding': '8px'
-                    })
+                    }).set_table_styles([
+                        {'selector': 'th', 'props': [('text-align', 'left')]},
+                        {'selector': '.col0', 'props': [('width', '50%')]},  # Item column
+                        {'selector': '.col1, .col2, .col3, .col4, .col5, .col6', 'props': [('width', '8.33%')]}  # Other columns
+                    ])
                     
                     # Color compliance scores and accuracy
                     def color_score(val):
@@ -199,44 +212,8 @@ def display_checklist_items(db_service: DatabaseService):
                     
                     styled_df = styled_df.map(color_score, subset=['Compliance', 'Accuracy'])
                     
-                    # Display the table with column configuration
-                    st.dataframe(
-                        styled_df,
-                        column_config={
-                            "Item": st.column_config.TextColumn(
-                                "Item",
-                                width="large",  
-                                help="Checklist item text"
-                            ),
-                            "Yes": st.column_config.TextColumn(
-                                "Yes",
-                                width="extra-small"  
-                            ),
-                            "No": st.column_config.TextColumn(
-                                "No",
-                                width="extra-small"
-                            ),
-                            "Partial": st.column_config.TextColumn(
-                                "Partial",
-                                width="extra-small"
-                            ),
-                            "N/A": st.column_config.TextColumn(
-                                "N/A",
-                                width="extra-small"
-                            ),
-                            "Compliance": st.column_config.TextColumn(
-                                "Compliance",
-                                width="extra-small"
-                            ),
-                            "Accuracy": st.column_config.TextColumn(
-                                "Accuracy",
-                                width="extra-small",
-                                help="Percentage of feedback ratings matching compliance results"
-                            )
-                        },
-                        use_container_width=True,
-                        hide_index=True
-                    )
+                    # Display using st.table
+                    st.table(styled_df)
                 
                 st.write("---")  # Separator between groups
     else:

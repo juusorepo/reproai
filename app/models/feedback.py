@@ -14,6 +14,7 @@ class Feedback:
         review_status: str,
         rating: Optional[str] = None,
         comments: str = "",
+        user_email: Optional[str] = None,
         created_at: Optional[datetime] = None
     ):
         """Initialize a feedback entry.
@@ -24,6 +25,7 @@ class Feedback:
             review_status: Review status (agreed/disagreed/unsure)
             rating: Optional user's rating (Yes/No/Partial/N/A)
             comments: Optional user comments
+            user_email: Optional user email
             created_at: Timestamp of feedback creation
         """
         if rating is not None and rating not in self.VALID_RATINGS:
@@ -37,6 +39,7 @@ class Feedback:
         self.rating = rating
         self.review_status = review_status
         self.comments = comments
+        self.user_email = user_email
         self.created_at = created_at or datetime.utcnow()
     
     def to_dict(self) -> Dict[str, Any]:
@@ -47,6 +50,7 @@ class Feedback:
             "rating": self.rating,
             "review_status": self.review_status,
             "comments": self.comments,
+            "user_email": self.user_email,
             "created_at": self.created_at
         }
     
@@ -59,5 +63,6 @@ class Feedback:
             rating=data.get("rating"),
             review_status=data.get("review_status", "disagreed"),  # Default for backward compatibility
             comments=data.get("comments", ""),
+            user_email=data.get("user_email"),
             created_at=data.get("created_at", datetime.utcnow())
         )

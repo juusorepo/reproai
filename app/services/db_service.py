@@ -16,6 +16,7 @@ from app.models.checklist_item import ChecklistItem
 from app.models.feedback import Feedback
 from datetime import datetime
 from bson import ObjectId
+import re
 
 class DatabaseService:
     def __init__(self, uri: str):
@@ -28,6 +29,7 @@ class DatabaseService:
         self.checklist_items: Collection = self.db.checklist_items
         self.feedback: Collection = self.db.feedback
         self.compliance_summaries: Collection = self.db.compliance_summaries
+        self.users: Collection = self.db.users
         
         # Create indexes
         self._create_indexes()
@@ -48,10 +50,76 @@ class DatabaseService:
         # New feedback indexes
         self.feedback.create_index([("doi", 1), ("item_id", 1)])
         self.feedback.create_index("created_at")
+        self.feedback.create_index("user_email")  # New index for user email
         
         # Compliance summaries indexes
         self.compliance_summaries.create_index("doi", unique=True)
         self.compliance_summaries.create_index("created_at")
+        
+        # Users collection indexes
+        self.users.create_index("email", unique=True)
+        self.users.create_index("created_at")
+
+    def _validate_email(self, email: str) -> bool:
+        """
+        Validate email format using regex.
+        
+        Args:
+            email: Email address to validate
+            
+        Returns:
+            bool: True if email is valid, False otherwise
+        """
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return bool(re.match(pattern, email))
+
+    def save_user(self, email: str) -> bool:
+        """
+        Save or update a user in the database.
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            bool: True if successful, False if email is invalid
+            
+        Raises:
+            ValueError: If email is invalid
+        """
+        if not self._validate_email(email):
+            raise ValueError("Invalid email format")
+            
+        user_data = {
+            "email": email,
+            "last_login": datetime.now()
+        }
+        
+        # Update if exists, insert if not
+        result = self.users.update_one(
+            {"email": email},
+            {
+                "$set": {"last_login": user_data["last_login"]},
+                "$setOnInsert": {"created_at": datetime.now()}
+            },
+            upsert=True
+        )
+        
+        return True
+
+    def get_user(self, email: str) -> Optional[Dict[str, Any]]:
+        """
+        Get user data from database.
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            Optional[Dict]: User data if found, None otherwise
+        """
+        if not self._validate_email(email):
+            raise ValueError("Invalid email format")
+            
+        return self.users.find_one({"email": email})
     
     def save_manuscript(self, manuscript: Manuscript) -> str:
         """
@@ -191,62 +259,66 @@ class DatabaseService:
             print(f"Error getting manuscripts: {str(e)}")
             return []
 
-    def save_feedback(self, feedback: Feedback) -> bool:
-        """Save user feedback for a compliance result.
+    def save_feedback(self, feedback: Feedback) -> None:
+        """
+        Save feedback to the database.
         
         Args:
-            feedback: Feedback instance to save
-            
-        Returns:
-            bool: True if successful, False if error
+            feedback: Feedback object to save
         """
-        try:
-            # Convert to dict and save
-            feedback_dict = feedback.to_dict()
-            self.feedback.update_one(
-                {"doi": feedback.doi, "item_id": feedback.item_id},
-                {"$set": feedback_dict},
-                upsert=True
-            )
-            return True
-        except Exception as e:
-            print(f"Error saving feedback: {str(e)}")
-            return False
-    
-    def get_feedback(self, doi: str, item_id: str) -> Optional[Feedback]:
+        # Verify manuscript exists
+        if not self.manuscripts.find_one({"doi": feedback.doi}):
+            raise ValueError(f"No manuscript found with DOI: {feedback.doi}")
+        
+        # Verify user exists if email is provided
+        if feedback.user_email and not self.users.find_one({"email": feedback.user_email}):
+            raise ValueError(f"No user found with email: {feedback.user_email}")
+        
+        # Save feedback
+        data = feedback.to_dict()
+        self.feedback.insert_one(data)
+
+    def get_feedback(self, doi: str, item_id: str, user_email: Optional[str] = None) -> Optional[Feedback]:
         """Get feedback for a specific compliance result.
         
         Args:
-            doi: Manuscript DOI
-            item_id: Checklist item ID
+            doi: DOI of the manuscript
+            item_id: ID of the checklist item
+            user_email: Optional email of the user. If provided, only return feedback from this user
             
         Returns:
-            Feedback instance if found, None otherwise
+            Optional[Feedback]: Feedback if found, None otherwise
         """
-        try:
-            feedback_dict = self.feedback.find_one({"doi": doi, "item_id": item_id})
-            if feedback_dict:
-                return Feedback.from_dict(feedback_dict)
-            return None
-        except Exception as e:
-            print(f"Error getting feedback: {str(e)}")
-            return None
+        query = {"doi": doi, "item_id": item_id}
+        if user_email:
+            if not self._validate_email(user_email):
+                raise ValueError("Invalid email format")
+            query["user_email"] = user_email
+            
+        feedback_dict = self.feedback.find_one(query)
+        if feedback_dict:
+            return Feedback.from_dict(feedback_dict)
+        return None
     
-    def get_all_feedback(self, doi: str) -> List[Feedback]:
+    def get_all_feedback(self, doi: str, user_email: Optional[str] = None) -> List[Feedback]:
         """Get all feedback for a manuscript.
         
         Args:
             doi: Manuscript DOI
+            user_email: Optional email of the user. If provided, only return feedback from this user
             
         Returns:
-            List of Feedback instances
+            List[Feedback]: List of feedback instances
         """
         try:
-            feedback_list = []
-            cursor = self.feedback.find({"doi": doi})
-            for feedback_dict in cursor:
-                feedback_list.append(Feedback.from_dict(feedback_dict))
-            return feedback_list
+            query = {"doi": doi}
+            if user_email:
+                if not self._validate_email(user_email):
+                    raise ValueError("Invalid email format")
+                query["user_email"] = user_email
+                
+            feedback_list = list(self.feedback.find(query))
+            return [Feedback.from_dict(f) for f in feedback_list]
         except Exception as e:
             print(f"Error getting all feedback: {str(e)}")
             return []
@@ -270,6 +342,21 @@ class DatabaseService:
         except Exception as e:
             print(f"Error getting all feedback by item: {str(e)}")
             return {}
+
+    def get_feedback_by_user(self, email: str) -> List[Dict[str, Any]]:
+        """
+        Get all feedback by a specific user.
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            List[Dict]: List of feedback items
+        """
+        if not self._validate_email(email):
+            raise ValueError("Invalid email format")
+            
+        return list(self.feedback.find({"user_email": email}).sort("created_at", -1))
 
     def save_summary(self, doi: str, overview: str, category_summaries: List[Dict[str, Any]]) -> None:
         """Save a compliance summary to database.
