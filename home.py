@@ -164,7 +164,7 @@ def main():
     st.sidebar.markdown(f"**User:** {st.session_state.user_email}")
     
     # Rest of the main function
-    st.markdown("Upload a manuscript (PDF) for analysis or view previous results.")
+    st.markdown("Upload a manuscript (PDF) for analysis (~5min) or view previous results.")
     
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
     

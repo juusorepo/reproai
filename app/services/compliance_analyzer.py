@@ -82,6 +82,7 @@ class ComplianceAnalyzer:
             # Add metadata
             result["item_id"] = checklist_item["item_id"]
             result["question"] = checklist_item["question"]
+            result["description"] = checklist_item["description"]
             result["created_at"] = datetime.now()
             result["doi"] = manuscript.doi
             

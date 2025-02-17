@@ -2,6 +2,8 @@ Analyze this manuscript section for compliance with reporting guidelines.
 
 Item to check: {item[question]}
 
+Description: {item[description]}
+
 Text to analyze:
 {text}
 
