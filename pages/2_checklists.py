@@ -10,6 +10,8 @@ Author: ReproAI Team
 import streamlit as st
 import pandas as pd
 from app.services.db_service import DatabaseService
+from pages.views.checklist_manage_view import manage_checklist_items
+from pages.views.checklist_stats_view import calculate_compliance_score, format_compliance_status, calculate_accuracy
 import os
 
 # Load CSS
@@ -19,64 +21,12 @@ def load_css():
     with open(css_file, 'r') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-def calculate_compliance_score(compliances: list) -> float:
-    """Calculate compliance score from a list of compliance values."""
-    scores = {
-        "Yes": 1.0,
-        "No": 0.0,
-        "Partial": 0.5,
-        "n/a": None
-    }
-    valid_scores = [scores[c] for c in compliances if scores[c] is not None]
-    return int(round(sum(valid_scores) / len(valid_scores) * 100)) if valid_scores else 0
-
-def format_compliance_status(status: str):
-    """Format compliance status with color."""
-    colors = {
-        "Yes": "#2ecc71",
-        "No": "#e74c3c",
-        "Partial": "#f1c40f",
-        "n/a": "#95a5a6"
-    }
-    return f"<span style='color: {colors[status]}'>{status}</span>"
-
-def calculate_accuracy(results, feedback_list):
-    """Calculate accuracy of AI assessments based on user feedback.
-    
-    Args:
-        results: List of compliance results
-        feedback_list: List of feedback for the item
-        
-    Returns:
-        float: Accuracy percentage or None if no reviewed items
-    """
-    total_reviewed = 0
-    correct_assessments = 0
-    
-    # Create a map of feedback by DOI for faster lookup
-    feedback_by_doi = {f.doi: f for f in feedback_list}
-    
-    # Check each compliance result
-    for result in results:
-        feedback = feedback_by_doi.get(result.doi)
-        if not feedback or feedback.review_status == "skipped":
-            continue
-            
-        total_reviewed += 1
-        if feedback.review_status == "agreed":
-            correct_assessments += 1
-    
-    if total_reviewed == 0:
-        return None
-        
-    return (correct_assessments / total_reviewed) * 100
-
 def display_checklist_items(db_service: DatabaseService):
     """Display the checklist view."""
     st.markdown('<h2 class="section-title">Current checklist</h2>', unsafe_allow_html=True)
     
     st.markdown("""
-        <div class="css-1r6slb0">
+        <div class="card">
             <p><strong>Title:</strong> Nature Research Reporting Summary</p>
             <p><strong>Section:</strong> Behavioural & social sciences study design</p>
             <p><strong>Source:</strong> <a href="https://www.nature.com/documents/nr-reporting-summary.pdf" target="_blank">www.nature.com/documents/nr-reporting-summary.pdf</a></p>
@@ -174,22 +124,11 @@ def display_checklist_items(db_service: DatabaseService):
                 if data:
                     df = pd.DataFrame(data)
                     
-                    # Hide index column with CSS
-                    hide_table_row_index = """
-                        <style>
-                        thead tr th:first-child {display:none}
-                        tbody th {display:none}
-                        </style>
-                    """
-                    st.markdown(hide_table_row_index, unsafe_allow_html=True)
+                    # Add CSS classes for index hiding and table styling
+                    st.markdown('<div class="hide-index data-table">', unsafe_allow_html=True)
                     
                     # Style the table
-                    styled_df = df.style.set_properties(**{
-                        'text-align': 'left',
-                        'font-size': '0.9em',
-                        'padding': '8px'
-                    }).set_table_styles([
-                        {'selector': 'th', 'props': [('text-align', 'left')]},
+                    styled_df = df.style.set_table_styles([
                         {'selector': '.col0', 'props': [('width', '50%')]},  # Item column
                         {'selector': '.col1, .col2, .col3, .col4, .col5, .col6', 'props': [('width', '8.33%')]}  # Other columns
                     ])
@@ -201,157 +140,38 @@ def display_checklist_items(db_service: DatabaseService):
                         try:
                             score = float(val.rstrip('%'))
                             if score >= 80:
-                                color = '#2ecc71'  # Green
+                                return 'color: #2ecc71; font-weight: bold'  # Green
                             elif score >= 50:
-                                color = '#f39c12'  # Orange
+                                return 'color: #f39c12; font-weight: bold'  # Orange
                             else:
-                                color = '#e74c3c'  # Red
-                            return f'color: {color}; font-weight: bold'
+                                return 'color: #e74c3c; font-weight: bold'  # Red
                         except ValueError:
                             return 'color: #95a5a6; font-weight: bold'  # Gray for non-numeric
                     
                     styled_df = styled_df.map(color_score, subset=['Compliance', 'Accuracy'])
                     
-                    # Display using st.table
                     st.table(styled_df)
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 st.write("---")  # Separator between groups
     else:
         st.warning("No checklist items found in database")
 
-def manage_checklist_items(db_service: DatabaseService):
-    """Form to add or edit checklist items."""
-    st.markdown('<h2 class="section-title">Manage Checklist Items</h2>', unsafe_allow_html=True)
-    
-    # Get existing categories and items
-    checklist_items = db_service.get_checklist_items()
-    categories = sorted(list(set(item.get('category', '') for item in checklist_items if item.get('category'))))
-    items_by_category = {}
-    for item in checklist_items:
-        cat = item.get('category', '')
-        if cat not in items_by_category:
-            items_by_category[cat] = {
-                'original': item.get('original', ''),
-                'items': []
-            }
-        items_by_category[cat]['items'].append(item)
-    
-    # Initialize session state
-    if 'adding_new_item' not in st.session_state:
-        st.session_state.adding_new_item = False
-    
-    # Select existing category
-    category = st.selectbox("Category", categories, help="Select the category this item belongs to")
-    
-    # Select item to edit if category is selected
-    current_item = None
-    if category and category in items_by_category:
-        items = sorted(items_by_category[category]['items'], key=lambda x: x.get('question', ''))
-        selected_item = st.selectbox(
-            "Select Item to Edit",
-            options=items,
-            format_func=lambda x: x.get('question', ''),
-            help="Choose an item to edit"
-        )
-        if selected_item:
-            current_item = selected_item
-    
-    # Show the original text for the selected category
-    original = ""
-    if category and category in items_by_category:
-        original = items_by_category[category]['original']
-        if original:
-            st.markdown("**Original Text:**")
-            st.markdown(f"*{original}*")
-            st.write("---")
-    
-    # Toggle for adding new item
-    col1, col2 = st.columns([0.85, 0.15])
-    with col2:
-        if st.button("Add New" if not st.session_state.adding_new_item else "Edit Existing", use_container_width=True):
-            st.session_state.adding_new_item = not st.session_state.adding_new_item
-            st.experimental_rerun()
-    
-    if st.session_state.adding_new_item:
-        with st.form("add_item_form"):
-            st.markdown('<h3 class="section-subtitle">Add New Item</h3>', unsafe_allow_html=True)
-            item_text = st.text_area("Item", height=100, help="The specific item to check")
-            description = st.text_area("Description", help="Detailed description of what this item checks for")
-            col1, col2 = st.columns(2)
-            submit = col1.form_submit_button("Add Item")
-            if col2.form_submit_button("Cancel"):
-                st.session_state.adding_new_item = False
-                st.experimental_rerun()
-            
-            if submit:
-                if not all([category, item_text]):
-                    st.error("Please fill in all required fields")
-                    return
-                
-                try:
-                    new_item = {
-                        "category": category,
-                        "original": original,
-                        "question": item_text,
-                        "description": description
-                    }
-                    db_service.save_checklist_item(new_item)
-                    st.success(" New item added successfully!")
-                    st.session_state.adding_new_item = False
-                    st.experimental_rerun()
-                except Exception as e:
-                    st.error(f"Error adding item: {str(e)}")
-    
-    else:  # Edit existing item
-        if current_item:
-            with st.form("edit_item_form"):
-                st.markdown('<h3 class="section-subtitle">Edit Item</h3>', unsafe_allow_html=True)
-                item_text = st.text_area("Item", value=current_item.get('question', ''), height=100, help="The specific item to check")
-                description = st.text_area("Description", value=current_item.get('description', ''), help="Detailed description of what this item checks for")
-                
-                if st.form_submit_button("Save Changes"):
-                    if not all([category, item_text]):
-                        st.error("Please fill in all required fields")
-                        return
-                    
-                    try:
-                        updated_item = {
-                            "item_id": current_item.get('item_id'),
-                            "category": category,
-                            "original": original,
-                            "question": item_text,
-                            "description": description
-                        }
-                        db_service.update_checklist_item(updated_item)
-                        st.success(" Item updated successfully!")
-                        st.experimental_rerun()
-                    except Exception as e:
-                        st.error(f"Error updating item: {str(e)}")
-
 def main():
-    """Main app function."""
-    # Load CSS
+    """Main function to run the app."""
+    st.set_page_config(
+        page_title="ReproAI - Checklists",
+        page_icon="📋",
+        layout="wide"
+    )
+    
     load_css()
     
-    # Sidebar Navigation
-    st.sidebar.title("Instructions")
-    st.sidebar.write("Later on, user may choose which checklist to use for the analysis.")
-    
-    # Main content
-    st.markdown("""
-        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h1 class="custom-title">Checklists</h1>
-            </div>
-    """, unsafe_allow_html=True)
-    
-    # Initialize database service
+    # Initialize database service with MongoDB URI from secrets
     db_service = DatabaseService(st.secrets["MONGODB_URI"])
     
-    # Create tabs
-    tab1, tab2 = st.tabs([
-        "View Checklist",
-        "Manage Items"
-    ])
+    # Create tabs for different views
+    tab1, tab2 = st.tabs(["View Checklists", "Manage Checklists"])
     
     with tab1:
         display_checklist_items(db_service)

@@ -107,6 +107,7 @@ class ComplianceAnalyzer:
             List of dictionaries containing compliance analysis results
         """
         results = []
+        errors = []
         
         for item in checklist_items:
             try:
@@ -125,7 +126,37 @@ class ComplianceAnalyzer:
                     )
                     
             except Exception as e:
-                print(f"Error analyzing item {item['item_id']}: {str(e)}")
-                continue
+                error_msg = f"Error analyzing item {item['item_id']}: {str(e)}"
+                print(error_msg)
+                errors.append(error_msg)
+                # Don't continue silently, try to reanalyze with a delay
+                try:
+                    print(f"Retrying analysis for item {item['item_id']} after delay...")
+                    time.sleep(5)  # Wait 5 seconds before retry
+                    result = self.analyze_item(manuscript, text, item)
+                    results.append(result)
+                    
+                    if store_results:
+                        self.db_service.compliance_results.update_one(
+                            {
+                                "doi": manuscript.doi,
+                                "item_id": item["item_id"]
+                            },
+                            {"$set": result},
+                            upsert=True
+                        )
+                except Exception as retry_e:
+                    error_msg = f"Failed retry for item {item['item_id']}: {str(retry_e)}"
+                    print(error_msg)
+                    errors.append(error_msg)
+                    continue
+                
+        if errors:
+            print("Analysis completed with errors:")
+            for error in errors:
+                print(f"- {error}")
+            
+        if not results:
+            raise Exception("No results were generated. Analysis failed completely.")
                 
         return results

@@ -28,9 +28,10 @@ METADATA_SCHEMA = {
         "design": {"type": "string"},
         "doi": {"type": "string"},
         "abstract": {"type": "string"},
-        "email": {"type": "string"}
+        "email": {"type": "string"},
+        "discipline": {"type": "string"}
     },
-    "required": ["title", "authors"]
+    "required": ["title", "authors", "design", "discipline"]
 }
 
 class MetadataExtractor:
@@ -144,7 +145,8 @@ class MetadataExtractor:
                 "authors": result.get("authors", []),
                 "abstract": result.get("abstract", ""),
                 "design": result.get("design", ""),
-                "email": result.get("email", "")
+                "email": result.get("email", ""),
+                "discipline": result.get("discipline", "")
             }
             
         except Exception as e:

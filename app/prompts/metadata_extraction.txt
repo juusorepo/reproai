@@ -8,12 +8,15 @@ Required fields:
 4. "doi" (string): DOI without URL prefix, leave empty if not found
 5. "abstract" (string): Abstract of the manuscript, leave empty if not found
 6. "email" (string): Email address of the corresponding of first author, leave empty if not found
+7. "discipline" (string): A detailed classification of the manuscript's academic field. Use a specific term that best describes the study's field (e.g., "Cognitive Psychology", "Molecular Biology", "Educational Technology", "Biomedical Engineering"). If uncertain, provide the best possible match.
+
 Example:
-{"title":"Effects of Exercise on Mental Health","authors":["John Smith","Jane Doe"],"design":"Longitudinal study with repeated measures over 12 months","doi":"10.1234/abcd.123", "abstract":"This study examined the effects of exercise on mental health in a sample of participants.", "email":"john@example.com"}
+{"title":"Effects of Exercise on Mental Health","authors":["John Smith","Jane Doe"],"design":"Longitudinal study with repeated measures over 12 months","doi":"10.1234/abcd.123", "abstract":"This study examined the effects of exercise on mental health in a sample of participants.", "email":"john@example.com", "discipline":"Cognitive Psychology"}
 
 Important:
 - Return ONLY a valid JSON object
 - Do not include any explanations or additional text
+- Format author names as "First Last" only
 - Format author names as "First Last" only
 - For title, ignore any repeated titles in headers
 - For authors, ignore numbers and affiliations

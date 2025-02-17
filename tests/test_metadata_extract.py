@@ -69,7 +69,10 @@ def test_metadata_extraction(pdf_path: str):
         print("\nManuscript details:")
         print(f"Title: {manuscript.title}")
         print(f"Authors: {manuscript.authors}")
-        print(f"DOI: {manuscript.doi}")
+        print(f"DOI: {metadata.get('doi', 'Not found')}")
+        print(f"Abstract: {metadata.get('abstract', 'Not found')[:100]}...")
+        print(f"Email: {metadata.get('email', 'Not found')}")
+        print(f"Discipline: {metadata.get('discipline', 'Not found')}")
         print(f"Abstract length: {len(manuscript.abstract)} chars")
         print(f"Text length: {len(manuscript.text)} chars")
         

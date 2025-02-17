@@ -29,9 +29,7 @@ from app.services.summarize_service import SummarizeService
 from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.feedback import Feedback
-from app.pages.compliance_analysis import compliance_analysis_page
-from app.pages.summary_view import summary_view_page
-from app.pages.checklist_view import checklist_view_page
+from pages.views.results_view import compliance_analysis_page
 import json
 from datetime import datetime
 import tempfile

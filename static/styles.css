@@ -171,6 +171,52 @@ section[data-testid="stSidebar"] {
     color: #1E293B;
 }
 
+/* Custom table styles */
+.data-table {
+    text-align: left;
+    font-size: 0.9em;
+    padding: 8px;
+}
+
+.data-table th {
+    text-align: left;
+}
+
+.data-table .item-col {
+    width: 50%;
+}
+
+.data-table .stat-col {
+    width: 8.33%;
+}
+
+/* Score colors */
+.score-high {
+    color: #2ecc71 !important;
+    font-weight: bold;
+}
+
+.score-medium {
+    color: #f39c12 !important;
+    font-weight: bold;
+}
+
+.score-low {
+    color: #e74c3c !important;
+    font-weight: bold;
+}
+
+.score-na {
+    color: #95a5a6 !important;
+    font-weight: bold;
+}
+
+/* Hide table index */
+.hide-index thead tr th:first-child,
+.hide-index tbody th {
+    display: none;
+}
+
 /* Code Blocks */
 pre {
     font-size: 14px;

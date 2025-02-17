@@ -75,6 +75,9 @@ def process_uploaded_file(uploaded_file):
             authors=metadata.get('authors', []),
             doi=metadata.get('doi', ''),
             abstract=metadata.get('abstract', ''),
+            design=metadata.get('design', ''),
+            discipline=metadata.get('discipline', ''),
+            email=metadata.get('email', ''),
             text=text,
             processed_at=datetime.now()
         )
@@ -84,18 +87,29 @@ def process_uploaded_file(uploaded_file):
 
         # Run compliance analysis
         checklist_items = db_service.get_checklist_items()
-        results = compliance_analyzer.analyze_manuscript(
-            manuscript=manuscript,
-            text=text,
-            checklist_items=checklist_items
-        )
-        if not results:
-            st.error("Could not analyze manuscript compliance.")
-            return None
+        try:
+            with st.spinner("Analyzing manuscript compliance..."):
+                results = compliance_analyzer.analyze_manuscript(
+                    manuscript=manuscript,
+                    text=text,
+                    checklist_items=checklist_items
+                )
+                if not results:
+                    st.error("Could not analyze manuscript compliance. No results were generated.")
+                    return None
+                
+                if len(results) < len(checklist_items):
+                    st.warning(f"⚠️ Analysis completed but only {len(results)} out of {len(checklist_items)} items were analyzed successfully. Some items may need to be reanalyzed.")
 
-        # Save results to database
-        for result in results:
-            db_service.save_compliance_result(doi=manuscript.doi, result=result)
+                # Save results to database
+                for result in results:
+                    db_service.save_compliance_result(doi=manuscript.doi, result=result)
+
+        except Exception as e:
+            st.error(f"Error during compliance analysis: {str(e)}")
+            if hasattr(e, '__cause__') and e.__cause__:
+                st.error(f"Caused by: {str(e.__cause__)}")
+            return None
 
         # Generate and save summary
         overview, category_summaries = summarize_service.summarize_results(results)

@@ -29,6 +29,7 @@ class Manuscript:
         abstract (str): Abstract of the manuscript
         design (str): Study design type
         email (str): Email of the corresponding/first author
+        discipline (str): Academic field classification
         status (str): Status of the manuscript analysis
         analysis_date (datetime): When the manuscript was last analyzed
         pdf_path (str): Path to the manuscript PDF
@@ -44,6 +45,7 @@ class Manuscript:
         abstract: str = "",
         design: str = "",
         email: str = "",
+        discipline: str = "",
         status: str = "processed",
         analysis_date: Optional[datetime] = None,
         pdf_path: str = "",
@@ -59,6 +61,7 @@ class Manuscript:
             abstract: Abstract of the manuscript
             design: Study design type
             email: Email of the corresponding/first author
+            discipline: Academic field classification
             status: Analysis status
             analysis_date: When the manuscript was analyzed
             pdf_path: Path to the PDF file
@@ -71,6 +74,7 @@ class Manuscript:
         self.abstract = abstract
         self.design = design
         self.email = email
+        self.discipline = discipline
         self.status = status
         self.analysis_date = analysis_date or datetime.now()
         self.pdf_path = pdf_path
@@ -86,6 +90,7 @@ class Manuscript:
             "abstract": self.abstract,
             "design": self.design,
             "email": self.email,
+            "discipline": self.discipline,
             "status": self.status,
             "analysis_date": self.analysis_date,
             "pdf_path": self.pdf_path,
@@ -112,6 +117,7 @@ class Manuscript:
             abstract=data.get("abstract", ""),
             design=data.get("design", ""),
             email=data.get("email", ""),
+            discipline=data.get("discipline", ""),
             status=data.get("status", "processed"),
             analysis_date=data.get("analysis_date"),
             pdf_path=data.get("pdf_path", ""),

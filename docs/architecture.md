@@ -68,6 +68,111 @@ graph TD
 ### Storage
 - **MongoDB**: Stores manuscripts, analysis results, and user feedback
 
+## Error Handling
+
+ReproAI implements a robust error handling system:
+
+1. **Compliance Analysis**
+   - Automatic retry mechanism for failed checklist items
+   - 5-second delay between retries to handle rate limits
+   - Detailed error collection and reporting
+   - Progress tracking for partial completions
+
+2. **User Feedback**
+   - Clear error messages in the UI
+   - Warning indicators for partial analyses
+   - Real-time progress updates
+   - Detailed error traces for debugging
+
+3. **Data Integrity**
+   - Transaction-based database operations
+   - Validation of all user inputs
+   - Schema validation for API responses
+   - Automatic data cleanup
+
+## Components
+
+### Frontend (Streamlit)
+
+- **Upload Component**
+  - PDF file validation
+  - Progress tracking
+  - Error reporting
+
+- **Results View**
+  - Compliance score calculation
+  - Analysis completeness indicators
+  - Error and warning displays
+
+- **Review View**
+  - Detailed analysis results
+  - User feedback collection
+  - Error correction interface
+
+### Services
+
+- **PDF Extractor**
+  - Text extraction
+  - Error handling for corrupted files
+  - Progress tracking
+
+- **Metadata Extractor**
+  - Title, authors, DOI extraction
+  - Discipline classification
+  - Schema validation
+  - Retry mechanism
+
+- **Compliance Analyzer**
+  - 22-item checklist analysis
+  - Automatic retries for failed items
+  - Error collection and reporting
+  - Progress tracking
+  - Rate limit handling
+
+- **Database Service**
+  - MongoDB operations
+  - Transaction support
+  - Error handling
+  - Data validation
+
+- **Summarize Service**
+  - Result aggregation
+  - Category-based analysis
+  - Error handling for partial results
+
+### Data Models
+
+- **Manuscript**
+  - Basic metadata (title, authors, DOI)
+  - Extended metadata (discipline, design)
+  - Analysis status tracking
+  - Validation rules
+
+- **ComplianceResult**
+  - Analysis results
+  - Supporting evidence
+  - Error tracking
+  - Validation schema
+
+- **Feedback**
+  - User corrections
+  - Quality metrics
+  - Validation rules
+
+## Error Flow
+
+```mermaid
+graph TD
+    A[Analysis Request] --> B{Compliance Analyzer}
+    B --> |Success| C[Store Results]
+    B --> |Failure| D[Retry Logic]
+    D --> |Success| C
+    D --> |Failure| E[Error Collection]
+    E --> F[User Notification]
+    F --> G[Partial Results]
+    G --> H[Summary Generation]
+```
+
 ## Database Schema
 
 ```mermaid

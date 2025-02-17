@@ -167,7 +167,7 @@ def display_feedback_ui(db_service, result, manuscript, existing_feedback=None):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.button("❌ Disagree with AI", key=f"disagree_{result['item_id']}"):
+            if st.button("❌ Disagree", key=f"disagree_{result['item_id']}"):
                 if not rating:
                     st.error("Please select your rating before disagreeing")
                 else:
