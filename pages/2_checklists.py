@@ -9,9 +9,17 @@ Author: ReproAI Team
 
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from app.services.db_service import DatabaseService
 from pages.views.checklist_manage_view import manage_checklist_items
-from pages.views.checklist_stats_view import calculate_compliance_score, format_compliance_status, calculate_accuracy
+from pages.views.checklist_stats_view import (
+    calculate_compliance_score, 
+    format_compliance_status, 
+    calculate_accuracy,
+    get_unique_values,
+    get_stats_by_field,
+    filter_manuscripts
+)
 import os
 
 # Load CSS
@@ -21,12 +29,59 @@ def load_css():
     with open(css_file, 'r') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+def display_filter_sidebar(manuscripts):
+    """Display filter controls in the sidebar."""
+    st.sidebar.markdown("## Filter Manuscripts")
+    
+    # Discipline filter
+    disciplines = ["All"] + get_unique_values(manuscripts, 'discipline')
+    selected_discipline = st.sidebar.selectbox("Discipline", disciplines)
+    
+    # Design filter
+    designs = ["All"] + get_unique_values(manuscripts, 'design')
+    selected_design = st.sidebar.selectbox("Study Design", designs)
+    
+    # Date range filter
+    st.sidebar.markdown("### Processing Date Range")
+    
+    # Get min and max dates from manuscripts
+    dates = [m.processed_at for m in manuscripts if m.processed_at]
+    min_date = min(dates) if dates else datetime.now()
+    max_date = max(dates) if dates else datetime.now()
+    
+    start_date = st.sidebar.date_input("From", min_date)
+    end_date = st.sidebar.date_input("To", max_date)
+    
+    # Build filters dict
+    filters = {}
+    if selected_discipline != "All":
+        filters['discipline'] = selected_discipline
+    if selected_design != "All":
+        filters['design'] = selected_design
+    
+    # Convert dates to datetime
+    filters['processed_after'] = datetime.combine(start_date, datetime.min.time())
+    filters['processed_before'] = datetime.combine(end_date, datetime.max.time())
+    
+    return filters
+
+def display_stats_summary(manuscripts, filters):
+    """Display summary statistics based on current filters."""
+    st.sidebar.markdown("## Summary Statistics")
+    
+    # Filter manuscripts
+    filtered_manuscripts = filter_manuscripts(manuscripts, filters)
+    total_filtered = len(filtered_manuscripts)
+    
+    st.sidebar.metric("Total Manuscripts", total_filtered)
+
 def display_checklist_items(db_service: DatabaseService):
     """Display the checklist view."""
-    st.markdown('<h2 class="section-title">Current checklist</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Checklist Statistics</h2>', unsafe_allow_html=True)
     
     st.markdown("""
         <div class="card">
+            <h4>Current Checklist</h4>
             <p><strong>Title:</strong> Nature Research Reporting Summary</p>
             <p><strong>Section:</strong> Behavioural & social sciences study design</p>
             <p><strong>Source:</strong> <a href="https://www.nature.com/documents/nr-reporting-summary.pdf" target="_blank">www.nature.com/documents/nr-reporting-summary.pdf</a></p>
@@ -39,9 +94,15 @@ def display_checklist_items(db_service: DatabaseService):
         </div>
     """, unsafe_allow_html=True)
     
-    # Get checklist items and all compliance results from database
+    # Get checklist items and all manuscripts from database
     checklist_items = db_service.get_checklist_items()
     all_manuscripts = db_service.get_all_manuscripts()
+    
+    # Display filters in sidebar and get filter settings
+    filters = display_filter_sidebar(all_manuscripts)
+    
+    # Display summary statistics
+    display_stats_summary(all_manuscripts, filters)
     
     # Get all compliance results and feedback for statistics
     all_results = {}
@@ -49,8 +110,11 @@ def display_checklist_items(db_service: DatabaseService):
     # Get all feedback in a single query
     all_feedback = db_service.get_all_feedback_by_item()
     
-    # Get all compliance results
-    for manuscript in all_manuscripts:
+    # Filter manuscripts based on criteria
+    filtered_manuscripts = filter_manuscripts(all_manuscripts, filters)
+    
+    # Get all compliance results for filtered manuscripts
+    for manuscript in filtered_manuscripts:
         results = db_service.get_compliance_results(manuscript.doi)
         for result in results:
             if result.item_id not in all_results:
@@ -99,27 +163,23 @@ def display_checklist_items(db_service: DatabaseService):
                         compliances_dict = {"Yes": 0, "No": 0, "Partial": 0, "n/a": 0}
                         for result in compliances:
                             compliances_dict[result.compliance] += 1
+                            
+                        # Calculate statistics
+                        compliance_score = calculate_compliance_score([r.compliance for r in compliances])
+                        accuracy = calculate_accuracy(compliances, all_feedback.get(item_id, []))
                         
-                        # Calculate percentages
-                        yes_count = compliances_dict["Yes"]
-                        no_count = compliances_dict["No"]
-                        partial_count = compliances_dict["Partial"]
-                        na_count = compliances_dict["n/a"]
-                        
-                        # Calculate accuracy
-                        feedback_list = all_feedback.get(item_id, [])
-                        accuracy = calculate_accuracy(compliances, feedback_list)
-                        
-                        # Create table data
-                        data.append({
+                        # Format row data
+                        row = {
                             "Item": item.get('question', ''),
-                            "Yes": f"{int(yes_count/total_results*100)}%",
-                            "No": f"{int(no_count/total_results*100)}%",
-                            "Partial": f"{int(partial_count/total_results*100)}%",
-                            "N/A": f"{int(na_count/total_results*100)}%",
+                            "Total": total_results,
+                            "Yes": f"{int(compliances_dict['Yes']/total_results*100)}%",
+                            "No": f"{int(compliances_dict['No']/total_results*100)}%",
+                            "Partial": f"{int(compliances_dict['Partial']/total_results*100)}%",
+                            "N/A": f"{int(compliances_dict['n/a']/total_results*100)}%",
                             "Compliance": f"{calculate_compliance_score([r.compliance for r in compliances])}%",
-                            "Accuracy": f"{int(accuracy)}%" if accuracy is not None else "N/A"
-                        })
+                            "AI Accuracy": f"{int(accuracy)}%" if accuracy is not None else "N/A"
+                        }
+                        data.append(row)
                 
                 if data:
                     df = pd.DataFrame(data)
@@ -130,7 +190,7 @@ def display_checklist_items(db_service: DatabaseService):
                     # Style the table
                     styled_df = df.style.set_table_styles([
                         {'selector': '.col0', 'props': [('width', '50%')]},  # Item column
-                        {'selector': '.col1, .col2, .col3, .col4, .col5, .col6', 'props': [('width', '8.33%')]}  # Other columns
+                        {'selector': '.col1, .col2, .col3, .col4, .col5, .col6, .col7', 'props': [('width', '7.14%')]}  # Other columns
                     ])
                     
                     # Color compliance scores and accuracy
@@ -148,26 +208,24 @@ def display_checklist_items(db_service: DatabaseService):
                         except ValueError:
                             return 'color: #95a5a6; font-weight: bold'  # Gray for non-numeric
                     
-                    styled_df = styled_df.map(color_score, subset=['Compliance', 'Accuracy'])
+                    styled_df = styled_df.map(color_score, subset=['Compliance', 'AI Accuracy'])
                     
                     st.table(styled_df)
                     st.markdown('</div>', unsafe_allow_html=True)
                 
                 st.write("---")  # Separator between groups
-    else:
-        st.warning("No checklist items found in database")
 
 def main():
     """Main function to run the app."""
     st.set_page_config(
-        page_title="ReproAI - Checklists",
-        page_icon="📋",
+        page_title="ReproAI - Checklist Statistics",
+        page_icon="✅",
         layout="wide"
     )
     
     load_css()
     
-    # Initialize database service with MongoDB URI from secrets
+    # Initialize database service
     db_service = DatabaseService(st.secrets["MONGODB_URI"])
     
     # Create tabs for different views
