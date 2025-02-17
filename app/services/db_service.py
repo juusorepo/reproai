@@ -14,7 +14,7 @@ from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.checklist_item import ChecklistItem
 from app.models.feedback import Feedback
-from datetime import datetime
+from datetime import datetime, timezone, UTC
 from bson import ObjectId
 import re
 
@@ -91,7 +91,7 @@ class DatabaseService:
             
         user_data = {
             "email": email,
-            "last_login": datetime.now()
+            "last_login": datetime.now(UTC)
         }
         
         # Update if exists, insert if not
@@ -99,7 +99,7 @@ class DatabaseService:
             {"email": email},
             {
                 "$set": {"last_login": user_data["last_login"]},
-                "$setOnInsert": {"created_at": datetime.now()}
+                "$setOnInsert": {"created_at": datetime.now(UTC)}
             },
             upsert=True
         )
@@ -157,7 +157,7 @@ class DatabaseService:
         # Add DOI and timestamp
         result["doi"] = doi
         if "created_at" not in result:
-            result["created_at"] = datetime.now()
+            result["created_at"] = datetime.now(UTC)
             
         # Update or insert
         self.compliance_results.update_one(
@@ -182,17 +182,87 @@ class DatabaseService:
         for result in results:
             self.save_compliance_result(doi, result)
     
-    def save_checklist_item(self, item: ChecklistItem) -> str:
-        """Save a checklist item to the database."""
-        data = item.to_dict()
+    def save_checklist_item(self, item: Dict[str, Any]) -> str:
+        """
+        Save a checklist item to the database.
+        
+        Args:
+            item: Dictionary containing checklist item data
+            
+        Returns:
+            str: ID of the saved item
+        """
+        # Generate item_id if not present
+        if 'item_id' not in item:
+            # Get highest existing item_id number
+            latest_item = self.checklist_items.find_one(
+                sort=[("item_id", -1)]
+            )
+            if latest_item and 'item_id' in latest_item:
+                try:
+                    last_num = float(latest_item['item_id'])
+                    item['item_id'] = f"{last_num + 0.1:.1f}"
+                except ValueError:
+                    item['item_id'] = "1.1"
+            else:
+                item['item_id'] = "1.1"
+        
+        # Add timestamps if not present
+        if 'created_at' not in item:
+            item['created_at'] = datetime.now(UTC)
+        item['updated_at'] = datetime.now(UTC)
+        
+        # Ensure required fields
+        required_fields = ['category', 'question', 'description', 'section']
+        missing_fields = [field for field in required_fields if field not in item]
+        if missing_fields:
+            raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
+        
         self.checklist_items.update_one(
-            {"item_id": data["item_id"]},
-            {"$set": data},
+            {"item_id": item["item_id"]},
+            {"$set": item},
             upsert=True
         )
-        return data["item_id"]
+        return item["item_id"]
     
-    def save_checklist_items(self, items: List[ChecklistItem]) -> None:
+    def update_checklist_item(self, item: Dict[str, Any]) -> bool:
+        """
+        Update an existing checklist item.
+        
+        Args:
+            item: Dictionary containing checklist item data with item_id
+            
+        Returns:
+            bool: True if update was successful
+            
+        Raises:
+            ValueError: If item_id is missing or required fields are not present
+        """
+        if 'item_id' not in item:
+            raise ValueError("item_id is required for updating checklist item")
+        
+        # Ensure required fields
+        required_fields = ['category', 'question', 'description', 'section']
+        missing_fields = [field for field in required_fields if field not in item]
+        if missing_fields:
+            raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
+            
+        # Add update timestamp
+        item['updated_at'] = datetime.now(UTC)
+        
+        # Preserve created_at if it exists
+        existing_item = self.checklist_items.find_one({"item_id": item["item_id"]})
+        if existing_item and 'created_at' in existing_item:
+            item['created_at'] = existing_item['created_at']
+        
+        result = self.checklist_items.update_one(
+            {"item_id": item["item_id"]},
+            {"$set": item}
+        )
+        
+        return result.modified_count > 0
+        
+    def save_checklist_items(self, items: List[Dict[str, Any]]) -> None:
         """Save multiple checklist items to the database."""
         for item in items:
             self.save_checklist_item(item)
@@ -374,7 +444,7 @@ class DatabaseService:
             "doi": doi,
             "overview": overview,
             "category_summaries": category_summaries,
-            "created_at": datetime.now()
+            "created_at": datetime.now(UTC)
         }
         
         self.compliance_summaries.update_one(

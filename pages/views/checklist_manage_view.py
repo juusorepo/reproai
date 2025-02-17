@@ -17,6 +17,8 @@ def manage_checklist_items(db_service: DatabaseService):
     # Get existing categories and items
     checklist_items = db_service.get_checklist_items()
     categories = sorted(list(set(item.get('category', '') for item in checklist_items if item.get('category'))))
+    sections = sorted(list(set(item.get('section', '') for item in checklist_items if item.get('section'))))
+    
     items_by_category = {}
     for item in checklist_items:
         cat = item.get('category', '')
@@ -68,6 +70,11 @@ def manage_checklist_items(db_service: DatabaseService):
             st.markdown('<h3 class="section-subtitle">Add New Item</h3>', unsafe_allow_html=True)
             item_text = st.text_area("Item", height=100, help="The specific item to check")
             description = st.text_area("Description", help="Detailed description of what this item checks for")
+            section = st.selectbox(
+                "Section",
+                [""] + sections,
+                help="The section this item belongs to"
+            )
             col1, col2 = st.columns(2)
             submit = col1.form_submit_button("Add Item")
             if col2.form_submit_button("Cancel"):
@@ -75,7 +82,7 @@ def manage_checklist_items(db_service: DatabaseService):
                 st.experimental_rerun()
             
             if submit:
-                if not all([category, item_text]):
+                if not all([category, item_text, section]):
                     st.error("Please fill in all required fields")
                     return
                 
@@ -84,10 +91,11 @@ def manage_checklist_items(db_service: DatabaseService):
                         "category": category,
                         "original": original,
                         "question": item_text,
-                        "description": description
+                        "description": description,
+                        "section": section
                     }
                     db_service.save_checklist_item(new_item)
-                    st.success(" New item added successfully!")
+                    st.success("New item added successfully!")
                     st.session_state.adding_new_item = False
                     st.experimental_rerun()
                 except Exception as e:
@@ -99,9 +107,15 @@ def manage_checklist_items(db_service: DatabaseService):
                 st.markdown('<h3 class="section-subtitle">Edit Item</h3>', unsafe_allow_html=True)
                 item_text = st.text_area("Item", value=current_item.get('question', ''), height=100, help="The specific item to check")
                 description = st.text_area("Description", value=current_item.get('description', ''), help="Detailed description of what this item checks for")
+                section = st.selectbox(
+                    "Section",
+                    [""] + sections,
+                    index=sections.index(current_item.get('section', '')) + 1 if current_item.get('section', '') in sections else 0,
+                    help="The section this item belongs to"
+                )
                 
                 if st.form_submit_button("Save Changes"):
-                    if not all([category, item_text]):
+                    if not all([category, item_text, section]):
                         st.error("Please fill in all required fields")
                         return
                     
@@ -111,10 +125,11 @@ def manage_checklist_items(db_service: DatabaseService):
                             "category": category,
                             "original": original,
                             "question": item_text,
-                            "description": description
+                            "description": description,
+                            "section": section
                         }
                         db_service.update_checklist_item(updated_item)
-                        st.success(" Item updated successfully!")
+                        st.success("Item updated successfully!")
                         st.experimental_rerun()
                     except Exception as e:
                         st.error(f"Error updating item: {str(e)}")
