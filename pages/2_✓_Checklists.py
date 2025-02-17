@@ -77,7 +77,6 @@ def display_stats_summary(manuscripts, filters):
 
 def display_checklist_items(db_service: DatabaseService):
     """Display the checklist view."""
-    st.markdown('<h2 class="section-title">Checklist Statistics</h2>', unsafe_allow_html=True)
     
     st.markdown("""
         <div class="card">
@@ -88,9 +87,11 @@ def display_checklist_items(db_service: DatabaseService):
         </div>
     """, unsafe_allow_html=True)
     
+    st.markdown('<h2 class="section-title">Checklist Statistics</h2>', unsafe_allow_html=True)
+    
     st.markdown("""
-        <div class="ai-insight">
-            Text from original source is shown in italics. The text is split to items for stepwise analysis.
+        <div>
+            Text from original source is shown in italics. The text is split to items and descriptions for stepwise analysis.
         </div>
     """, unsafe_allow_html=True)
     
@@ -171,7 +172,7 @@ def display_checklist_items(db_service: DatabaseService):
                         # Format row data
                         row = {
                             "Item": item.get('question', ''),
-                            "Total": total_results,
+                            "N": total_results,
                             "Yes": f"{int(compliances_dict['Yes']/total_results*100)}%",
                             "No": f"{int(compliances_dict['No']/total_results*100)}%",
                             "Partial": f"{int(compliances_dict['Partial']/total_results*100)}%",
@@ -184,34 +185,81 @@ def display_checklist_items(db_service: DatabaseService):
                 if data:
                     df = pd.DataFrame(data)
                     
-                    # Add CSS classes for index hiding and table styling
-                    st.markdown('<div class="hide-index data-table">', unsafe_allow_html=True)
+                    # Add custom table styling
+                    st.markdown(
+                        """
+                        <style>
+                        .custom-table {
+                            width: 100%;
+                            table-layout: fixed;
+                        }
+                        .custom-table td:first-child {
+                            width: 40% !important;
+                            white-space: normal;
+                            text-align: left !important;
+                            padding-right: 15px;
+                        }
+                        .custom-table td:not(:first-child) {
+                            width: 10% !important;
+                            text-align: center !important;
+                            vertical-align: top;
+                        }
+                        .custom-table th {
+                            text-align: center !important;
+                            background-color: #f0f2f6;
+                            padding: 8px !important;
+                        }
+                        .custom-table th:first-child {
+                            text-align: left !important;
+                            width: 40% !important;
+                        }
+                        .custom-table th:not(:first-child) {
+                            width: 10% !important;
+                        }
+                        .score-high {
+                            color: #2ecc71 !important;
+                            font-weight: bold;
+                        }
+                        .score-medium {
+                            color: #f39c12 !important;
+                            font-weight: bold;
+                        }
+                        .score-low {
+                            color: #e74c3c !important;
+                            font-weight: bold;
+                        }
+                        .score-na {
+                            color: #95a5a6 !important;
+                            font-weight: bold;
+                        }
+                        </style>
+                        """,
+                        unsafe_allow_html=True
+                    )
                     
-                    # Style the table
-                    styled_df = df.style.set_table_styles([
-                        {'selector': '.col0', 'props': [('width', '50%')]},  # Item column
-                        {'selector': '.col1, .col2, .col3, .col4, .col5, .col6, .col7', 'props': [('width', '7.14%')]}  # Other columns
-                    ])
-                    
-                    # Color compliance scores and accuracy
+                    # Color the compliance scores
                     def color_score(val):
                         if val == "N/A":
-                            return 'color: #95a5a6; font-weight: bold'  # Gray
+                            return f'<span class="score-na">{val}</span>'
                         try:
                             score = float(val.rstrip('%'))
                             if score >= 80:
-                                return 'color: #2ecc71; font-weight: bold'  # Green
+                                return f'<span class="score-high">{val}</span>'
                             elif score >= 50:
-                                return 'color: #f39c12; font-weight: bold'  # Orange
+                                return f'<span class="score-medium">{val}</span>'
                             else:
-                                return 'color: #e74c3c; font-weight: bold'  # Red
+                                return f'<span class="score-low">{val}</span>'
                         except ValueError:
-                            return 'color: #95a5a6; font-weight: bold'  # Gray for non-numeric
+                            return f'<span class="score-na">{val}</span>'
+
+                    # Apply coloring only to Compliance and AI Accuracy columns
+                    for col in ['Compliance', 'AI Accuracy']:
+                        if col in df.columns:
+                            df[col] = df[col].apply(color_score)
                     
-                    styled_df = styled_df.map(color_score, subset=['Compliance', 'AI Accuracy'])
-                    
-                    st.table(styled_df)
-                    st.markdown('</div>', unsafe_allow_html=True)
+                    # Convert DataFrame to HTML with the custom class
+                    html = df.to_html(classes=['custom-table', 'dataframe'], index=False, escape=False)
+                    st.markdown(html, unsafe_allow_html=True)
                 
                 st.write("---")  # Separator between groups
 
@@ -219,7 +267,7 @@ def main():
     """Main function to run the app."""
     st.set_page_config(
         page_title="ReproAI - Checklist Statistics",
-        page_icon="✅",
+        page_icon="✓",
         layout="wide"
     )
     
@@ -228,8 +276,13 @@ def main():
     # Initialize database service
     db_service = DatabaseService(st.secrets["MONGODB_URI"])
     
+    st.title("✓ Checklists")
+    st.markdown("""
+View checklist overall stats and edit checklist items. 
+""")
+
     # Create tabs for different views
-    tab1, tab2 = st.tabs(["View Checklists", "Manage Checklists"])
+    tab1, tab2 = st.tabs(["View Checklist", "Manage Items"])
     
     with tab1:
         display_checklist_items(db_service)

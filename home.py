@@ -15,7 +15,7 @@ import streamlit as st
 # Page configuration - Must be the first Streamlit command
 st.set_page_config(
     page_title="ReproAI Analyzer",
-    page_icon="",
+    page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -136,15 +136,11 @@ def process_uploaded_file(uploaded_file):
 
 def main():
     """Main app function."""
-    st.title("ReproAI Analyzer")
-    st.markdown("Enhancing reproducibility with AI-assisted analysis.")
+    # Title
+    st.title("🔍 ReproAI Analyzer")
     
     # Initialize session state for user email if not exists
     if 'user_email' not in st.session_state:
-        st.session_state.user_email = None
-    
-    # Email input section
-    if not st.session_state.user_email:
         st.markdown("### Sign in")
         st.markdown("Please enter your email address to continue:")
         email = st.text_input("Email address")

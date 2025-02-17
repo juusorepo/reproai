@@ -14,8 +14,8 @@ import streamlit as st
 
 # Page configuration - Must be the first Streamlit command
 st.set_page_config(
-    page_title="Analysis results",
-    page_icon="",
+    page_title="ReproAI Results",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -176,7 +176,7 @@ def main():
     
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h1>Analysis Results</h1>
+            <h1>📊 Analysis Results</h1>
         </div>
     """, unsafe_allow_html=True)
     
