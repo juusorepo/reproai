@@ -37,6 +37,45 @@ A Streamlit-based tool for analyzing scientific manuscripts against reporting gu
 
 See [Architecture Documentation](docs/architecture.md) for detailed system design information.
 
+## LLM Analysis Process
+
+ReproAI uses GPT-4 Turbo to perform sophisticated analysis of scientific manuscripts through a multi-stage process:
+
+### 1. Metadata Extraction
+- Extracts key manuscript information including:
+  - Title and authors
+  - Study design classification
+  - DOI and corresponding author's email
+  - Abstract
+  - Academic discipline classification
+- Uses structured JSON output format for consistent parsing
+
+### 2. Compliance Analysis
+- Analyzes manuscript against reporting guidelines
+- For each checklist item:
+  - Evaluates compliance status (Yes/No/Partial/N/A)
+  - Provides explanation for the assessment
+  - Extracts supporting quotes from the text
+  - Identifies relevant manuscript sections
+
+### 3. Results Summarization
+- Generates two types of summaries:
+  1. Overview Summary
+     - Overall compliance assessment
+     - Key strengths and gaps
+     - Critical recommendations (1-3 items)
+  2. Category-Based Analysis
+     - Per-category compliance level
+     - Severity assessment (high/medium/low)
+     - Specific improvement recommendations
+
+### Technical Implementation
+- Uses GPT-4 Turbo with 128K token context window
+- Implements smart text truncation (preserving recent content)
+- Structured JSON outputs for reliable parsing
+- Comprehensive error handling and logging
+- Debug mode for LLM input/output inspection
+
 ## Installation
 
 1. Clone the repository:
