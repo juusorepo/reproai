@@ -19,6 +19,7 @@ graph TD
     subgraph Services
         PDF[PDF Extractor]
         Meta[Metadata Extractor]
+        LLM[LLM Service]
         Analyzer[Compliance Analyzer]
         DB[Database Service]
         Summary[Summarize Service]
@@ -38,12 +39,12 @@ graph TD
     UI --> Checklist
     Upload --> PDF
     PDF --> Meta
+    Meta --> LLM
+    LLM --> OpenAI
     Meta --> Analyzer
-    Analyzer --> DB
+    Analyzer --> LLM
+    Summary --> LLM
     DB --> Mongo
-    Meta --> OpenAI
-    Analyzer --> OpenAI
-    Summary --> OpenAI
     Results --> DB
     Review --> DB
     Checklist --> DB
@@ -61,6 +62,7 @@ graph TD
 ### Services
 - **PDF Extractor**: Extracts text content from PDF files
 - **Metadata Extractor**: Uses OpenAI to extract metadata (title, authors, etc.)
+- **LLM Service**: Provides LLM functionality for analysis
 - **Compliance Analyzer**: Analyzes manuscript for reproducibility compliance
 - **Database Service**: Handles all database operations
 - **Summarize Service**: Generates summaries of compliance analysis
@@ -122,6 +124,12 @@ ReproAI implements a robust error handling system:
   - Schema validation
   - Retry mechanism
 
+- **LLM Service**
+  - Provides LLM functionality for analysis
+  - Context management
+  - Structured analysis
+  - Error handling
+
 - **Compliance Analyzer**
   - 22-item checklist analysis
   - Automatic retries for failed items
@@ -140,7 +148,44 @@ ReproAI implements a robust error handling system:
   - Category-based analysis
   - Error handling for partial results
 
-### Data Models
+### LLM Implementation
+
+#### Context Management
+- Uses GPT-4 Turbo with 128K token context window
+- Smart text truncation strategy:
+  - 100K tokens reserved for input
+  - 4K tokens reserved for output
+  - Preserves most recent content when truncating
+- Comprehensive error handling and retry logic
+
+#### Structured Analysis
+1. **Metadata Extraction**
+   - JSON-structured extraction of:
+     - Title and authors
+     - Study design and discipline
+     - DOI and contact information
+   - Schema validation for consistency
+
+2. **Compliance Analysis**
+   - Per-item JSON responses containing:
+     - Compliance status (Yes/No/Partial/N/A)
+     - Supporting evidence and quotes
+     - Section identification
+   - Automatic retry for failed items
+
+3. **Results Summarization**
+   - Two-level summary generation:
+     - Overview with key recommendations
+     - Category-based analysis with severity
+   - Structured output for reliable parsing
+
+#### Error Handling
+- Comprehensive logging of LLM interactions
+- Debug mode for input/output inspection
+- Rate limit management
+- Automatic retries with exponential backoff
+
+## Data Models
 
 - **Manuscript**
   - Basic metadata (title, authors, DOI)
@@ -236,15 +281,22 @@ For Streamlit Cloud deployment, these secrets are configured in the Streamlit Cl
 ```
 reproai/
 ├── app/
-│   ├── models/          # Data models
+│   ├── models/          # Data models (manuscript, compliance_result, feedback)
 │   ├── pages/          # UI pages
-│   ├── prompts/        # LLM prompts
+│   ├── prompts/        # LLM prompts for analysis
 │   └── services/       # Business logic
+│       ├── compliance_analyzer.py
+│       ├── db_service.py
+│       ├── llm_service.py
+│       ├── metadata_extractor.py
+│       ├── pdf_extractor.py
+│       └── summarize_service.py
 ├── docs/              # Documentation
 ├── scripts/           # Utility scripts
-├── .streamlit/        # Streamlit config
-├── streamlit_app.py   # Main app
-└── requirements.txt   # Dependencies
+├── static/           # Static assets (CSS)
+├── .streamlit/       # Streamlit config
+├── home.py          # Main application
+└── requirements.txt  # Dependencies
 ```
 
 ## Security Considerations
