@@ -9,6 +9,7 @@ venv/
 
 # Secrets
 .streamlit/secrets.toml
+app/.env
 
 # IDE
 .vscode/

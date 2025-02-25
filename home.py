@@ -20,7 +20,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-import os
+from app.config import OPENAI_API_KEY, MONGODB_URI
+from app.logging_utils import get_logger
 from app.services.pdf_extractor import PDFExtractor
 from app.services.metadata_extractor import MetadataExtractor
 from app.services.db_service import DatabaseService
@@ -32,20 +33,22 @@ from app.models.feedback import Feedback
 from datetime import datetime
 import tempfile
 
+logger = get_logger(__name__)
+
 # Load custom CSS
 with open('static/styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # Initialize services
-api_key = st.secrets["OPENAI_API_KEY"]
-if not api_key:
+openai_api_key = OPENAI_API_KEY
+if not openai_api_key:
     st.error("OpenAI API key not found in secrets!")
     st.stop()
 
-db_service = DatabaseService(st.secrets["MONGODB_URI"])
-metadata_extractor = MetadataExtractor(api_key)
-compliance_analyzer = ComplianceAnalyzer(api_key, db_service)
-summarize_service = SummarizeService(api_key, db_service)
+db_service = DatabaseService(MONGODB_URI)
+metadata_extractor = MetadataExtractor(openai_api_key)
+compliance_analyzer = ComplianceAnalyzer(openai_api_key, db_service)
+summarize_service = SummarizeService(openai_api_key, db_service)
 
 def process_uploaded_file(uploaded_file):
     """Process uploaded PDF file."""

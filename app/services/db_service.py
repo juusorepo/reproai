@@ -14,7 +14,7 @@ from app.models.manuscript import Manuscript
 from app.models.compliance_result import ComplianceResult
 from app.models.checklist_item import ChecklistItem
 from app.models.feedback import Feedback
-from datetime import datetime, timezone, UTC
+from datetime import datetime, timezone
 from bson import ObjectId
 import re
 
@@ -91,7 +91,7 @@ class DatabaseService:
             
         user_data = {
             "email": email,
-            "last_login": datetime.now(UTC)
+            "last_login": datetime.now(timezone.utc)
         }
         
         # Update if exists, insert if not
@@ -99,7 +99,7 @@ class DatabaseService:
             {"email": email},
             {
                 "$set": {"last_login": user_data["last_login"]},
-                "$setOnInsert": {"created_at": datetime.now(UTC)}
+                "$setOnInsert": {"created_at": datetime.now(timezone.utc)}
             },
             upsert=True
         )
@@ -157,7 +157,7 @@ class DatabaseService:
         # Add DOI and timestamp
         result["doi"] = doi
         if "created_at" not in result:
-            result["created_at"] = datetime.now(UTC)
+            result["created_at"] = datetime.now(timezone.utc)
             
         # Update or insert
         self.compliance_results.update_one(
@@ -209,8 +209,8 @@ class DatabaseService:
         
         # Add timestamps if not present
         if 'created_at' not in item:
-            item['created_at'] = datetime.now(UTC)
-        item['updated_at'] = datetime.now(UTC)
+            item['created_at'] = datetime.now(timezone.utc)
+        item['updated_at'] = datetime.now(timezone.utc)
         
         # Ensure required fields
         required_fields = ['category', 'question', 'description', 'section']
@@ -248,7 +248,7 @@ class DatabaseService:
             raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
             
         # Add update timestamp
-        item['updated_at'] = datetime.now(UTC)
+        item['updated_at'] = datetime.now(timezone.utc)
         
         # Preserve created_at if it exists
         existing_item = self.checklist_items.find_one({"item_id": item["item_id"]})
@@ -444,7 +444,7 @@ class DatabaseService:
             "doi": doi,
             "overview": overview,
             "category_summaries": category_summaries,
-            "created_at": datetime.now(UTC)
+            "created_at": datetime.now(timezone.utc)
         }
         
         self.compliance_summaries.update_one(
